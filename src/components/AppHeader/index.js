@@ -1,44 +1,176 @@
-import React from 'react'
-import deployButton from '../../assets/deploy-to-netlify.svg'
-import logo from '../../assets/logo.svg'
-import github from '../../assets/github.svg'
-import styles from './AppHeader.css' // eslint-disable-line
+import React, { Component } from "react";
+import {
+  Button,
+  Collapse,
+  NavbarBrand,
+  Navbar,
+  NavItem,
+  NavLink,
+  Nav,
+  Container,
+  Row,
+  Col,
+} from "reactstrap";
 
-const AppHeader = (props) => {
-  return (
-    <header className='app-header'>
-      <div className='app-title-wrapper'>
-        <div className='app-title-wrapper'>
-          <div className='app-left-nav'>
-            <img src={logo} className='app-logo' alt='logo' />
-            <div className='app-title-text'>
-              <h1 className='app-title'>Netlify + Fauna DB</h1>
-              <p className='app-intro'>
-                Using FaunaDB & Netlify functions
-              </p>
+import { ToastsContainer, ToastsStore } from "react-toasts";
+import api from "../../utils/api";
+
+export default class AppHeader extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      collapseOpen: false,
+      userlogin: false,
+      userlogged: {},
+      color: "navbar-transparent",
+      left: false,
+      sessionUser: window.sessionStorage.getItem("revitGoogleID") || "",
+    };
+  }
+  componentDidMount() {
+    // attach event listeners
+    // window.sessionStorage.setItem("revitGoogleID", googleData.googleID);
+    //window.sessionStorage.getItem('revitUserID')
+    const alreadylogged = window.sessionStorage.getItem("revitGoogleID") || "";
+
+    window.addEventListener("scroll", this.changeColor);
+  }
+  componentWillUnmount() {
+    // remove event listeners
+    window.removeEventListener("scroll", this.changeColor);
+  }
+
+  getrecordId = (todo) => {
+    if (!todo.ref) {
+      return null;
+    }
+    return todo.ref["@ref"].id;
+  };
+  updateUserLogin = (data) => {
+    this.setState({
+      userlogin: true,
+      userlogged: data,
+    });
+  };
+  changeColor = () => {
+    if (
+      document.documentElement.scrollTop > 99 ||
+      document.body.scrollTop > 99
+    ) {
+      this.setState({
+        color: "bg-info",
+      });
+    } else if (
+      document.documentElement.scrollTop < 100 ||
+      document.body.scrollTop < 100
+    ) {
+      this.setState({
+        color: "navbar-transparent",
+      });
+    }
+  };
+  toggleCollapse = () => {
+    document.documentElement.classList.toggle("nav-open");
+    this.setState({
+      collapseOpen: !this.state.collapseOpen,
+    });
+  };
+
+  logout = () => {
+    this.setState({
+      userlogin: false,
+      userlogged: {},
+    });
+  };
+  render() {
+    return (
+      <Navbar
+        className={"fixed-top " + this.state.color}
+        color-on-scroll="100"
+        expand="lg"
+      >
+        <Container>
+          <div className="navbar-translate">
+            <NavbarBrand
+              data-placement="bottom"
+              to="/"
+              rel="noopener noreferrer"
+              title=""
+            >
+              <span>REVIT </span>
+            </NavbarBrand>
+
+            <button
+              aria-expanded={this.state.collapseOpen}
+              className="navbar-toggler navbar-toggler"
+              onClick={this.toggleCollapse}
+            >
+              <span className="navbar-toggler-bar bar1" />
+              <span className="navbar-toggler-bar bar2" />
+              <span className="navbar-toggler-bar bar3" />
+            </button>
+          </div>
+          <Collapse
+            className={"justify-content-end " + this.state.collapseOut}
+            navbar
+            isOpen={this.state.collapseOpen}
+            onExiting={this.onCollapseExiting}
+            onExited={this.onCollapseExited}
+          >
+            <div className="navbar-collapse-header">
+              <Row>
+                <Col className="collapse-brand" xs="6">
+                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
+                    REVIT
+                  </a>
+                </Col>
+                <Col className="collapse-close text-right" xs="6">
+                  <button
+                    aria-expanded={this.state.collapseOpen}
+                    className="navbar-toggler"
+                    onClick={this.toggleCollapse}
+                  >
+                    <i className="fa fa-times" aria-hidden="true"></i>
+                  </button>
+                </Col>
+              </Row>
             </div>
-          </div>
-        </div>
-        <div className='deploy-button-wrapper'>
-          <a
-            target='_blank'
-            rel='noopener noreferrer'
-            href='https://app.netlify.com/start/deploy?repository=https://github.com/netlify/netlify-faunadb-example&stack=fauna'>
-            <img src={deployButton} className='deploy-button' alt='deploy to netlify' />
-          </a>
-          <div className='view-src'>
-            <a
-              target='_blank'
-              rel='noopener noreferrer'
-              href='https://github.com/netlify/netlify-faunadb-example'>
-              <img className='github-icon' src={github} alt='view repo on github' />
-              View the source Luke
-            </a>
-          </div>
-        </div>
-      </div>
-    </header>
-  )
-}
+            <Nav navbar>
+              <NavItem className="p-0">
+                <NavLink href="/">
+                  <p className="">Home</p>
+                </NavLink>
+              </NavItem>
+              <NavItem className="p-0">
+                <NavLink href="/students">
+                  <p className="">Students</p>
+                </NavLink>
+              </NavItem>
+              <NavItem className="p-0">
+                <NavLink href="/staffs">
+                  <p className="">Staffs</p>
+                </NavLink>
+              </NavItem>
+              <NavItem className="p-0">
+                <NavLink href="/articles">
+                  <p className="">Articles</p>
+                </NavLink>
+              </NavItem>
 
-export default AppHeader
+              <NavItem>
+                <Button
+                  className="nav-link d-none d-lg-block"
+                  color="default"
+                  onClick={this.scrollToDownload}
+                >
+                  <i className="tim-icons icon-cloud-download-93" /> Login
+                </Button>
+              </NavItem>
+            </Nav>
+          </Collapse>
+          <div className="float-right"></div>
+        </Container>
+      </Navbar>
+    );
+  }
+}
