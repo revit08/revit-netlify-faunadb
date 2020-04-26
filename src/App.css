@@ -4,7 +4,6 @@ body {
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #525f7f;
   text-align: left;
 }
 .logoutBtn,
@@ -20,14 +19,14 @@ body {
 }
 .modal-dialog.modal-xl {
   max-width: 900px;
-  background: #16183e;
+  background: #222831;
 }
 .modal.show .modal-dialog.modal-xl {
   -webkit-transform: translate(0, 5%);
   transform: translate(0, 5%);
 }
 .modal-xl .modal-content {
-  background-color: #1e204d;
+  background: #222831;
 }
 
 .ag-theme-balham-dark {

@@ -8,7 +8,7 @@ exports.handler = (event, context) => {
     secret: process.env.FAUNADB_SERVER_SECRET,
   });
   return client
-    .query(q.Paginate(q.Match(q.Ref("indexes/all_students"))))
+    .query(q.Paginate(q.Match(q.Ref("indexes/all_pages"))))
     .then((response) => {
       const todoRefs = response.data;
       console.log("Todo refs", todoRefs);

@@ -22,6 +22,10 @@ exports.handler = (event, context) => {
       return client.query(getAllTodoDataQuery).then((ret) => {
         return {
           statusCode: 200,
+		  headers: {
+            'content-type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
           body: JSON.stringify(ret)
         }
       })
@@ -29,6 +33,10 @@ exports.handler = (event, context) => {
       console.log('error', error)
       return {
         statusCode: 400,
+		headers: {
+            'content-type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         body: JSON.stringify(error)
       }
     })

@@ -49,6 +49,7 @@ const userbase = {
 export default class Students extends Component {
   state = {
     todos: [],
+    input: "",
     cardview: true,
     context: { componentParent: this },
     student: {},
@@ -170,6 +171,11 @@ export default class Students extends Component {
   download = () => {
     console.log("coming soon");
   };
+  onChangeHandler(e) {
+    this.setState({
+      input: e.target.value,
+    });
+  }
   renderStudents() {
     const { replists } = this.state;
 
@@ -189,7 +195,7 @@ export default class Students extends Component {
       // only show delete button after create API response returns
 
       return (
-        <div key={i} className="col-12 col-sm-6 col-lg-4 ">
+        <div key={i} className="col-12 col-sm-6 col-lg-4  mb-5 mb-lg-5">
           <UserListCard
             html={data.name}
             profileData={data}
@@ -205,36 +211,53 @@ export default class Students extends Component {
       );
     });
   }
+
   render() {
     return (
       <div className="app">
-        <section className="breadcrumb-area bg-img bg-gradient-overlay jarallax">
-          <div className="container h-100">
-            <div className="row h-100 align-items-center">
-              <div className="col-12">
-                <div className="breadcrumb-content">
-                  <h2 className="page-title">STUDENTS</h2>
-                  <nav aria-label="breadcrumb">
-                    <ol className="breadcrumb">
-                      <li className="breadcrumb-item">
-                        <a href="index.html">Home</a>
-                      </li>
-                      <li
-                        className="breadcrumb-item active"
-                        aria-current="page"
-                      >
-                        STUDENTS
-                      </li>
-                    </ol>
-                  </nav>
-                </div>
+        <div className="site-blocks-cover inner-page-cover overlay">
+          <div className="container">
+            <div className="row align-items-center justify-content-center">
+              <div className="col-md-7 text-center">
+                <h1 className="text-white">STUDENTS</h1>
+                <p>Search.</p>
+                <input
+                  value={this.state.input}
+                  type="text"
+                  onChange={this.onChangeHandler.bind(this)}
+                />
               </div>
             </div>
           </div>
-        </section>
+        </div>
         <section className="our-speaker-area section-padding-100">
           <br />
           <div className="container">
+            {this.state.replists &&
+              this.state.replists
+                .filter((data) => {
+                  return data.name.toLowerCase().indexOf(this.state.input) > -1;
+                })
+                .map((data, i) => {
+                  return (
+                    <div
+                      key={i}
+                      className="col-12 col-sm-6 col-lg-4  mb-5 mb-lg-5"
+                    >
+                      <UserListCard
+                        html={data.name}
+                        profileData={data}
+                        profileRef={getStudentId(data)}
+                        viewLink={true}
+                        editLink={true}
+                        openUserModal={this.openUserModal}
+                        openUserView={this.openUserView}
+                        editPath="/student/edit/"
+                        viewPath="/student/"
+                      />
+                    </div>
+                  );
+                })}
             {this.state.cardview ? (
               <div className="row">{this.renderStudents()}</div>
             ) : (
@@ -248,13 +271,9 @@ export default class Students extends Component {
           className="modal-xl"
         >
           <ModalHeader toggle={this.toogleStudentView}>
-            <hr className="line-info" />
-            <h3>
-              <span className="text-info">
-                {" "}
-                {this.state.studentModelData.name}{" "}
-              </span>
-            </h3>
+            <span className="text-info text-white text-uppercase">
+              {this.state.studentModelData.name}
+            </span>
           </ModalHeader>
           <ModalBody>
             <UserItemCard student={this.state.studentModelData} />

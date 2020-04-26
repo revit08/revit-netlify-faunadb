@@ -13,13 +13,19 @@ exports.handler = (event, context, callback) => {
     .then((response) => {
       // console.log('success', response)
       return callback(null, {
-        statusCode: 200,
+        statusCode: 200,headers: {
+            'content-type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         body: JSON.stringify(response)
       })
     }).catch((error) => {
       // console.log('error', error)
       return callback(null, {
-        statusCode: 400,
+        statusCode: 400,headers: {
+            'content-type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         body: JSON.stringify(error)
       })
     })

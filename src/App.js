@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import AppHeader from "./components/AppHeader";
+import Header from "./components/Common/Header";
 import Footer from "./components/Common/Footer";
 import "./App.css";
 
@@ -21,9 +21,8 @@ export default class App extends Component {
   render() {
     return (
       <div className="app">
-        <AppHeader />
-
         <BrowserRouter>
+          <Header />
           <div className="landing-page ">
             <div className=" wrapper">
               <div className="main-panel">
