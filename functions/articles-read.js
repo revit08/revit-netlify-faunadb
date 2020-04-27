@@ -15,12 +15,20 @@ exports.handler = (event, context) => {
       console.log('success', response)
       return {
         statusCode: 200,
+		  headers: {
+            'content-type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         body: JSON.stringify(response)
       }
     }).catch((error) => {
       console.log('error', error)
       return {
         statusCode: 400,
+		  headers: {
+            'content-type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         body: JSON.stringify(error)
       }
     })
