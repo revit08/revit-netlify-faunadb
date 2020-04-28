@@ -1,54 +1,78 @@
 import React, { Component } from "react";
-import { Card, Button, Container, Row, Col } from "reactstrap";
+import { Card,  Button, Container, Row, Col } from "reactstrap";
 
 export default class UserListCard extends Component {
   render() {
     const { profileData } = this.props;
     const userIcon =
-      "data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTkuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTI7IiB4bWw6c3BhY2U9InByZXNlcnZlIiB3aWR0aD0iMTI4cHgiIGhlaWdodD0iMTI4cHgiPgo8bGluZWFyR3JhZGllbnQgaWQ9IlNWR0lEXzFfIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjI1NiIgeTE9IjUxNCIgeDI9IjI1NiIgeTI9IjIiIGdyYWRpZW50VHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgLTEgMCA1MTQpIj4KCTxzdG9wIG9mZnNldD0iMCIgc3R5bGU9InN0b3AtY29sb3I6IzJBRjU5OCIvPgoJPHN0b3Agb2Zmc2V0PSIxIiBzdHlsZT0ic3RvcC1jb2xvcjojMDA5RUZEIi8+CjwvbGluZWFyR3JhZGllbnQ+CjxwYXRoIHN0eWxlPSJmaWxsOnVybCgjU1ZHSURfMV8pOyIgZD0iTTQzNy4wMiwzMzAuOThjLTI3Ljg4My0yNy44ODItNjEuMDcxLTQ4LjUyMy05Ny4yODEtNjEuMDE4ICBDMzc4LjUyMSwyNDMuMjUxLDQwNCwxOTguNTQ4LDQwNCwxNDhDNDA0LDY2LjM5MywzMzcuNjA3LDAsMjU2LDBTMTA4LDY2LjM5MywxMDgsMTQ4YzAsNTAuNTQ4LDI1LjQ3OSw5NS4yNTEsNjQuMjYyLDEyMS45NjIgIGMtMzYuMjEsMTIuNDk1LTY5LjM5OCwzMy4xMzYtOTcuMjgxLDYxLjAxOEMyNi42MjksMzc5LjMzMywwLDQ0My42MiwwLDUxMmg0MGMwLTExOS4xMDMsOTYuODk3LTIxNiwyMTYtMjE2czIxNiw5Ni44OTcsMjE2LDIxNmg0MCAgQzUxMiw0NDMuNjIsNDg1LjM3MSwzNzkuMzMzLDQzNy4wMiwzMzAuOTh6IE0xNDgsMTQ4YzAtNTkuNTUyLDQ4LjQ0OS0xMDgsMTA4LTEwOHMxMDgsNDguNDQ4LDEwOCwxMDhzLTQ4LjQ0OSwxMDgtMTA4LDEwOCAgUzE0OCwyMDcuNTUyLDE0OCwxNDh6Ii8+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=";
+      "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw4NDQ0NDg0NEA4NDQ4NDxAPDg8NEBMNFxEiFxURExMbKDQiGBonGxUfITEiJiorNjouFyEzODYuQygtOisBCgoKDg0NFQ0QGC0iHR0rNy4tLS0tKysrLSs3Ky0wLS0tMisrKy0tLS0tKystLS0rLS8tLSsvKystLSsrLS0tLf/AABEIAOEA4QMBEQACEQEDEQH/xAAaAAEAAwEBAQAAAAAAAAAAAAAABAUGAQMC/8QAOhABAAIBAgIECwYGAwEAAAAAAAECAwQRBRIGITFREyJBU2FxgZGUocEUFTJScrFCYmOTsuGi0fAj/8QAGgEBAQADAQEAAAAAAAAAAAAAAAECBAUDBv/EADMRAQACAQIBCQcDBQEAAAAAAAABAgMEESEFEhMxUWFxodEiMkFSksHwkbHhFCNCgfEz/9oADAMBAAIRAxEAPwC/d98eICBACIIoiAEIACAgIAggICAAgAICAgAICIIAogOoyECUAQRRARCQEBAAQEAQQEBAQAEBAAQEABEEUQEQdRmA4g6iAogIggAICAgAIgAgICAAgICAAgAIgiiIIDqMxAgBEEURACEABAQEAQQEBAAQAEBAQAEBEEAURBAdRmSgCCKICISAgIACAgCCAgIACAgIACAgAIgiiAiADqM3EHUQFEBEEABAQEABEAEBAQAEBAQAEABEEURBAAdNmAIgigggQgAICAgAIggIACAAgICAAgIggCiIIAEumzBBFEBEJAQEABAQBF7w3ozmyxF8k+CpPXETG95j9Pk9vua989Y4RxdLBybkyRzr+zHn/H5wT54Rw3F4uTPE2jti2asT7q7PLpctuqPJszpNHj4Xtx759NiOGcMydVM1YmezbPG/six0mWOuPI/ptFfhW3n6onEOi2SkTbBfwkdvLO1b7eieyfkyrniet45uS71jfHO/d8fz9GftWYmYmJiYnaYmNpie6Ye7lTExO0uICAAgIACIIogIgADjps3UQFEBEAEBAAYgDS9GOG0rSdZm2itN5x83ZEV7ck+7q9W/c1c+Sd+jq63J+nrFf6jJ1R1evog8Y47k1FprSbUw9kVidptHfefozx4Yrxnra2q11807V4V/fx9FQ9WiILDhXF82ltHLM2x+XHafF2/l/LLzvjiza0+ryYJ4TvHZ+dS847o8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";
     const userImage = (
-      <img
-        alt="cmsImage"
-        className="img-center img-fluid"
-        src={
-          profileData && profileData.flagimg
-            ? profileData.flagimg.base64
-            : userIcon
-        }
-      />
+      <div className="icon icon-primary">
+        <img
+          alt="cmsImage"
+          className="img-center img-fluid"
+          src={
+            profileData && profileData.flagimg
+              ? profileData.flagimg.base64
+              : userIcon
+          }
+        />
+      </div>
     );
 
     return (
       <React.Fragment>
-        <div className="team-member">
-          <div className="text-center"> {userImage}</div>
-
-          <div className="text">
-            <h2
-              onClick={() => {
-                this.props.openUserView(profileData.id);
-              }}
-              className="mb-2 font-weight-light h4 text-uppercase "
-            >
-              {profileData.name}{" "}
-            </h2>{" "}
-            <span className="d-block mb-2 text-white-opacity-05">
-              {profileData.location}
-            </span>
-            <p className="mb-4"></p>
-            <p>
-              <a href="#" className="text-white p-2">
-                <span className="icon-facebook"></span>
-              </a>
-              <a href="#" className="text-white p-2">
-                <span className="icon-twitter"></span>
-              </a>
-              <a href="#" className="text-white p-2">
-                <span className="icon-linkedin"></span>
-              </a>
-            </p>
-          </div>
-        </div>
+        <Card className="user-card">
+          <Container fluid>
+            <Row>
+              <Col className="p-0"> {userImage}</Col>
+              <Col>
+                <h4
+                  onClick={() => {
+                    this.props.openUserModal(profileData.id);
+                  }}
+                  className="pt-1 info-title"
+                >
+                  {profileData.name}{" "}
+                </h4>
+                <hr className="line-primary" />
+                <p>
+                  
+                  {profileData.location}
+                  
+                </p>
+                <Button
+                  className="btn-simple"
+                  color="primary"
+                  size="sm"
+                  onClick={() => {
+                    this.props.openUserModal(profileData.id);
+                  }}
+                >
+                  EDIT
+                </Button>
+                <Button
+                  className="btn-simple"
+                  color="primary"
+                  size="sm"
+                  onClick={() => {
+                    this.props.openUserView(profileData.id);
+                  }}
+                >
+                  VIEW
+                </Button>
+                {/*
+                  editLink && (
+                    <NavLink to={{ pathname: editPath + profileRef }}>
+                      <Button className="btn-simple" color="success" size="sm">
+                        EDIT
+                      </Button>
+                    </NavLink>
+                  ) */}
+              </Col>
+            </Row>
+          </Container>
+        </Card>
       </React.Fragment>
     );
   }

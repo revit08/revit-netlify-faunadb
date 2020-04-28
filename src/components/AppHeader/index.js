@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import {
-  Button,
   Collapse,
   NavbarBrand,
   Navbar,
@@ -135,38 +134,6 @@ export default class AppHeader extends Component {
                 </Col>
               </Row>
             </div>
-            <Nav navbar>
-              <NavItem className="p-0">
-                <NavLink href="/">
-                  <p className="">Home</p>
-                </NavLink>
-              </NavItem>
-              <NavItem className="p-0">
-                <NavLink href="/students">
-                  <p className="">Students</p>
-                </NavLink>
-              </NavItem>
-              <NavItem className="p-0">
-                <NavLink href="/staffs">
-                  <p className="">Staffs</p>
-                </NavLink>
-              </NavItem>
-              <NavItem className="p-0">
-                <NavLink href="/articles">
-                  <p className="">Articles</p>
-                </NavLink>
-              </NavItem>
-
-              <NavItem>
-                <Button
-                  className="nav-link d-none d-lg-block"
-                  color="default"
-                  onClick={this.scrollToDownload}
-                >
-                  <i className="tim-icons icon-cloud-download-93" /> Login
-                </Button>
-              </NavItem>
-            </Nav>
           </Collapse>
           <div className="float-right"></div>
         </Container>

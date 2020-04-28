@@ -1,15 +1,21 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Header from "./components/Common/Header";
-import Footer from "./components/Common/Footer";
+import AppHeader from "./components/AppHeader";
 import "./App.css";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import AdminNavbar from "./components/Navbars/AdminNavbar.js";
+import AdminFooter from "./components/Footers/AdminFooter.js";
+import Sidebar from "./components/Sidebar/Sidebar.js";
 
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham-dark.css";
-import Home from "./view/Home";
-import ComingSoon from "./view/ComingSoon";
-import Students from "./view/Students";
+import Home from "./views/Home";
+import Students from "./views/Students";
+import Student from "./views/Student";
+import Staffs from "./views/Staffs";
+import Articles from "./views/Articles";
+import Calendar from "./views/Calendar";
+import Session from "./views/Session";
 
+import routes from "./routes.js";
 export default class App extends Component {
   state = {
     showMenu: false,
@@ -21,22 +27,23 @@ export default class App extends Component {
   render() {
     return (
       <div className="app">
-        {/**  <BrowserRouter><Header /> 
-          <div className="landing-page ">
-            <div className=" wrapper">
-              <div className="main-panel">
-                <Switch>
-                  <Route exact path="/" component={Home} />
-                  <Route exact path="/students" component={Students} />
-                  <Route exact path="/staffs" component={ComingSoon} />
-                  <Route exact path="/articles" component={ComingSoon} />
-                  <Route exact path="/links" component={ComingSoon} />
-                </Switch>
-              </div>
-            </div>
+        <BrowserRouter>
+          <Sidebar {...this.props} routes={routes} />
+          <div className="main-content">
+            <AdminNavbar {...this.props} brandText="" />
+
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/students" component={Students} />
+              <Route exact path="/student/:sid" component={Student} />
+              <Route exact path="/staffs" component={Staffs} />
+              <Route exact path="/calendar" component={Calendar} />
+              <Route exact path="/articles" component={Articles} />
+              <Route exact path="/userlogged" component={Session} />
+            </Switch>
+            <AdminFooter />
           </div>
-          <Footer /></BrowserRouter>
-          */}
+        </BrowserRouter>
       </div>
     );
   }

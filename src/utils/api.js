@@ -1,47 +1,47 @@
 /* Api methods to call /functions */
 
-const create = (data) => {
-  return fetch('/.netlify/functions/todos-create', {
+const create = data => {
+  return fetch("/.netlify/functions/todos-create", {
     body: JSON.stringify(data),
-    method: 'POST'
+    method: "POST"
   }).then(response => {
-    return response.json()
-  })
-}
+    return response.json();
+  });
+};
 
 const readAll = () => {
-  return fetch('/.netlify/functions/todos-read-all').then((response) => {
-    return response.json()
-  })
-}
+  return fetch("/.netlify/functions/todos-read-all").then(response => {
+    return response.json();
+  });
+};
 
 const update = (todoId, data) => {
   return fetch(`/.netlify/functions/todos-update/${todoId}`, {
     body: JSON.stringify(data),
-    method: 'POST'
+    method: "POST"
   }).then(response => {
-    return response.json()
-  })
-}
+    return response.json();
+  });
+};
 
-const deleteTodo = (todoId) => {
+const deleteTodo = todoId => {
   return fetch(`/.netlify/functions/todos-delete/${todoId}`, {
-    method: 'POST',
+    method: "POST"
   }).then(response => {
-    return response.json()
-  })
-}
+    return response.json();
+  });
+};
 
-const batchDeleteTodo = (todoIds) => {
+const batchDeleteTodo = todoIds => {
   return fetch(`/.netlify/functions/todos-delete-batch`, {
     body: JSON.stringify({
       ids: todoIds
     }),
-    method: 'POST'
+    method: "POST"
   }).then(response => {
-    return response.json()
-  })
-}
+    return response.json();
+  });
+};
 
 const createStudent = data => {
   return fetch("/.netlify/functions/students-create", {
@@ -186,14 +186,61 @@ const batchDeleteArticles = articleIds => {
     return response.json();
   });
 };
+
+const createSession = data => {
+  return fetch("/.netlify/functions/session-create", {
+    body: JSON.stringify(data),
+    method: "POST"
+  }).then(response => {
+    return response.json();
+  });
+};
+
+const readAllSessions = () => {
+  return fetch("/.netlify/functions/session-read-all").then(response => {
+    return response.json();
+  });
+};
+const readSession = todoId => {
+  return fetch(`/.netlify/functions/session-read/${todoId}`).then(response => {
+    return response.json();
+  });
+};
+
+const updateSession = (sessionId, data) => {
+  return fetch(`/.netlify/functions/session-update/${sessionId}`, {
+    body: JSON.stringify(data),
+    method: "POST"
+  }).then(response => {
+    return response.json();
+  });
+};
+
+const deleteSession = sessionId => {
+  return fetch(`/.netlify/functions/session-delete/${sessionId}`, {
+    method: "POST"
+  }).then(response => {
+    return response.json();
+  });
+};
+
+const batchDeleteSessions = sessionIds => {
+  return fetch(`/.netlify/functions/sessions-delete-batch`, {
+    body: JSON.stringify({
+      ids: sessionIds
+    }),
+    method: "POST"
+  }).then(response => {
+    return response.json();
+  });
+};
 export default {
   create: create,
   readAll: readAll,
   update: update,
   delete: deleteTodo,
   batchDelete: batchDeleteTodo,
-
-createStudent: createStudent,
+  createStudent: createStudent,
   readAllStudents: readAllStudents,
   readStudent: readStudent,
   updateStudent: updateStudent,
@@ -209,5 +256,12 @@ createStudent: createStudent,
   readAllArticles: readAllArticles,
   readArticle: readArticle,
   updateArticle: updateArticle,
-  deleteArticle: deleteArticle
-}
+  deleteArticle: deleteArticle,
+  batchDeleteArticles: batchDeleteArticles,
+  createSession: createSession,
+  readAllSessions: readAllSessions,
+  readSession: readSession,
+  updateSession: updateSession,
+  deleteSession: deleteSession,
+  batchDeleteSessions: batchDeleteSessions
+};
