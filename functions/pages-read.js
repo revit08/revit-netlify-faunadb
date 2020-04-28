@@ -11,7 +11,7 @@ exports.handler = (event, context) => {
   const id = getId(event.path);
   console.log(`Function 'todo-read' invoked. Read id: ${id}`);
   return client
-    .query(q.Get(q.Ref(`classes/pages/${id}`)))
+    .query(q.Get(q.Ref(`classes/contentPages/${id}`)))
     .then((response) => {
       console.log("success", response);
       return {
