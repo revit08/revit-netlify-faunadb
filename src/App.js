@@ -21,8 +21,7 @@ export default class App extends Component {
   render() {
     return (
       <div className="app">
-        <BrowserRouter>
-          <Header />
+        {/**  <BrowserRouter><Header /> 
           <div className="landing-page ">
             <div className=" wrapper">
               <div className="main-panel">
@@ -36,8 +35,8 @@ export default class App extends Component {
               </div>
             </div>
           </div>
-          <Footer />
-        </BrowserRouter>
+          <Footer /></BrowserRouter>
+          */}
       </div>
     );
   }
