@@ -23,9 +23,7 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
 import FormGroupInput from "./../components/form/formGroupInput";
 import CellLinkRenderer from "./../components/grid/cellLinkRender";
-import Header from "./../components/Headers/Header.js";
 import api from "./../utils/api";
-import sortByDate from "./../utils/sortByDate";
 import isLocalHost from "./../utils/isLocalHost";
 
 const userbase = {
@@ -325,8 +323,7 @@ export default class Students extends Component {
   render() {
     return (
       <>
-        <Header />
-        <Container className="mt--7" fluid>
+        <Container className="pt-3" fluid>
           <ToastsContainer store={ToastsStore} />
           <div className="container">
             <div className="row">

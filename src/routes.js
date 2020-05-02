@@ -1,33 +1,28 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import Students from "./views/Students";
 import Staffs from "./views/Staffs";
 
 var routes = [
   {
-    path: "/students",
-    name: "students",
+    path: "/students-list",
+    name: "Students",
     icon: "ni ni-tv-2 text-primary",
     component: Students,
   },
   {
-    path: "/staffs",
+    path: "/staffs-list",
     name: "Staffs",
+    icon: "ni ni-planet text-blue",
+    component: Staffs,
+  },
+  {
+    path: "/pages-list",
+    name: "Pages",
+    icon: "ni ni-planet text-blue",
+    component: Staffs,
+  },
+  {
+    path: "/news-events-list",
+    name: "News & Events",
     icon: "ni ni-planet text-blue",
     component: Staffs,
   },

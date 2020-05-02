@@ -1,18 +1,16 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import AppHeader from "./components/AppHeader";
 import "./App.css";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import AdminNavbar from "./components/Navbars/AdminNavbar.js";
 import AdminFooter from "./components/Footers/AdminFooter.js";
-import Sidebar from "./components/Sidebar/Sidebar.js";
+import Header from "./components/Header/Header";
 
 import Home from "./views/Home";
-import Students from "./views/Students";
+import StudentsList from "./views/StudentsList";
+import StaffsList from "./views/StaffsList";
+import PagesList from "./views/PagesList";
 import Student from "./views/Student";
 import Staffs from "./views/Staffs";
 import Articles from "./views/Articles";
-import Calendar from "./views/Calendar";
 import Session from "./views/Session";
 
 import routes from "./routes.js";
@@ -26,19 +24,19 @@ export default class App extends Component {
 
   render() {
     return (
-      <div className="app">
+      <div class="bg-light">
         <BrowserRouter>
-          <Sidebar {...this.props} routes={routes} />
+          <Header {...this.props} routes={routes} />
           <div className="main-content">
-            <AdminNavbar {...this.props} brandText="" />
-
             <Switch>
               <Route exact path="/" component={Home} />
-              <Route exact path="/students" component={Students} />
+              <Route exact path="/students-list" component={StudentsList} />
+              <Route exact path="/staffs-list" component={StaffsList} />
+              <Route exact path="/pages-list" component={PagesList} />
+
               <Route exact path="/student/:sid" component={Student} />
               <Route exact path="/staffs" component={Staffs} />
-              <Route exact path="/calendar" component={Calendar} />
-              <Route exact path="/articles" component={Articles} />
+              <Route exact path="/news-events-list" component={Articles} />
               <Route exact path="/userlogged" component={Session} />
             </Switch>
             <AdminFooter />

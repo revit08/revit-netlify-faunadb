@@ -10,7 +10,6 @@ export default class FormGroupInput extends Component {
   }
 
   renderSwitch(param) {
-  
     switch (param) {
       case "text":
         return (

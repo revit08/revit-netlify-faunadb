@@ -1,27 +1,28 @@
 /* Import faunaDB sdk */
 const faunadb = require("faunadb");
-const getId = require("./utils/getId");
 const q = faunadb.query;
 
 exports.handler = (event, context) => {
-  /* configure faunaDB Client with our secret */
   const client = new faunadb.Client({
     secret: process.env.FAUNADB_SERVER_SECRET,
   });
-  const id = getId(event.path);
-  console.log(`Function 'todo-read' invoked. Read id: ${id}`);
   return client
-    .query(q.Get(q.Ref(`classes/contentPages/${id}`)))
+    .query(q.Paginate(q.Match(q.Ref("indexes/all_articles"))))
     .then((response) => {
-      console.log("success", response);
-      return {
-        statusCode: 200,
-        headers: {
-          "content-type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify(response),
-      };
+      const todoRefs = response.data;
+      const getAllTodoDataQuery = todoRefs.map((ref) => {
+        return q.Get(ref);
+      });
+      return client.query(getAllTodoDataQuery).then((ret) => {
+        return {
+          statusCode: 200,
+          headers: {
+            "content-type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+          body: JSON.stringify(ret),
+        };
+      });
     })
     .catch((error) => {
       console.log("error", error);

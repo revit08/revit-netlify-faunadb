@@ -24,10 +24,7 @@ import {
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-
-import CKEditor from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-
+import "react-image-crop/dist/ReactCrop.css";
 import CellLinkRenderer from "../components/grid/cellLinkRender";
 import api from "../utils/api";
 
@@ -40,9 +37,8 @@ import {
   downloadExcelFormat,
   getListData,
   responseValidator,
-  getFieldClass,
 } from "../utils/grid";
-export default class Articles extends Component {
+export default class StaffsList extends Component {
   constructor(props) {
     super(props);
 
@@ -51,10 +47,10 @@ export default class Articles extends Component {
       cardview: false,
       context: { componentParent: this },
 
-      itemModInfo: JSON.parse(JSON.stringify(inputAll.Articles)),
+      itemModInfo: JSON.parse(JSON.stringify(inputAll.staff)),
       itemModView: false,
       itemModTab: 1,
-      columnDefs: gridConfigure(inputAll.Articles),
+      columnDefs: gridConfigure(inputAll.staff),
       getRowHeight: function (params) {
         return 40;
       },
@@ -74,7 +70,7 @@ export default class Articles extends Component {
   }
 
   componentDidMount() {
-    api.readAllArticles().then((itemList) => {
+    api.readAllStaffs().then((itemList) => {
       responseValidator(itemList);
       const optimisedData = [];
       if (itemList.length > 0) {
@@ -84,7 +80,7 @@ export default class Articles extends Component {
           optimisedData.push(itemis);
         });
         this.setState({
-          itemList: getListData(optimisedData, inputAll.Articles),
+          itemList: getListData(optimisedData, inputAll.staff),
           itemGrid: getGridData(optimisedData),
         });
       }
@@ -114,35 +110,35 @@ export default class Articles extends Component {
     });
     if (itemModInfo.id) {
       api
-        .updateArticle(itemModInfo.id, updateApiData)
+        .updateStaff(itemModInfo.id, updateApiData)
         .then(() => {
-          ToastsStore.success(`Article Changes Updated!`);
+          ToastsStore.success(`Profile Changes Updated!`);
         })
         .catch((e) => {
-          ToastsStore.error(`Article Update Failed!`);
+          ToastsStore.error(`Profile Update Failed!`);
         });
     } else {
       updateApiData.created = new Date().getTime() * 10000;
       api
-        .createArticle(updateApiData)
+        .createStaff(updateApiData)
         .then((response) => {
-          ToastsStore.success(`Article Created Succesfully!`);
+          ToastsStore.success(`Profile Created Succesfully!`);
         })
         .catch((e) => {
-          ToastsStore.error(`Article Creation Failed!`);
+          ToastsStore.error(`Profile Creation Failed!`);
         });
     }
   };
-  deleteArticle = (e) => {
+  deleteStaff = (e) => {
     const { itemList } = this.state;
     const replistId = e.target.dataset.id;
 
     // Optimistically remove replist from UI
-    const filteredArticles = itemList.reduce(
+    const filteredStaffs = itemList.reduce(
       (acc, current) => {
         const currentId = getRecordID(current);
         if (currentId === replistId) {
-          acc.rollbackArticle = current;
+          acc.rollbackStaff = current;
           return acc;
         }
         // filter deleted replist out of the itemList list
@@ -150,38 +146,36 @@ export default class Articles extends Component {
         return acc;
       },
       {
-        rollbackArticle: {},
+        rollbackStaff: {},
         optimisticState: [],
       }
     );
 
     this.setState({
-      itemList: filteredArticles.optimisticState,
+      itemList: filteredStaffs.optimisticState,
     });
 
     // Make API request to delete replist
     api
-      .deleteArticle(replistId)
+      .deleteStaff(replistId)
       .then(() => {
         ToastsStore.success(`deleted replist id ${replistId}`);
       })
       .catch((e) => {
         ToastsStore.success(`There was an error removing ${replistId}`, e);
         this.setState({
-          itemList: filteredArticles.optimisticState.concat(
-            filteredArticles.rollbackArticle
+          itemList: filteredStaffs.optimisticState.concat(
+            filteredStaffs.rollbackStaff
           ),
         });
       });
   };
 
   newitemModView = () => {
-    const itemDoc = {
-      data: JSON.parse(JSON.stringify(inputAll.Articles)),
-    };
+    const staffItem = { data: JSON.parse(JSON.stringify(inputAll.staff)) };
 
     this.setState({
-      itemModInfo: itemDoc,
+      itemModInfo: staffItem,
     });
     this.setState({
       itemModView: true,
@@ -189,11 +183,11 @@ export default class Articles extends Component {
   };
 
   openUserModal = (id) => {
-    const itemDoc = this.state.itemList.find((o) => o.id === id);
-    //const itemDoc = JSON.parse(JSON.stringify(inputAll.Articles));
+    const staffItem = this.state.itemList.find((o) => o.id === id);
+    //const staffItem = JSON.parse(JSON.stringify(inputAll.staff));
 
     this.setState({
-      itemModInfo: itemDoc,
+      itemModInfo: staffItem,
     });
     this.setState({
       itemModView: true,
@@ -201,14 +195,12 @@ export default class Articles extends Component {
   };
 
   onInputChange = (tab, name, value) => {
-    console.log("e", { tab, name, value });
     const { itemModInfo } = this.state;
 
     var ind = itemModInfo.data[tab].list.findIndex((x) => x.field === name);
     if (ind >= 0) {
       itemModInfo.data[tab].list[ind].val = value;
     }
-    console.log(itemModInfo);
     this.setState({ itemModInfo });
   };
 
@@ -277,7 +269,7 @@ export default class Articles extends Component {
                     >
                       <Row className="align-items-center pb-2">
                         <div className="col">
-                          <h4 className="mb-0">Articles List</h4>
+                          <h4 className="mb-0">Staffs List</h4>
                         </div>
                         <div className="col text-right">
                           <ButtonGroup size="sm">
@@ -315,7 +307,7 @@ export default class Articles extends Component {
             className="modal-lg lg"
           >
             <ModalHeader toggle={this.toggle} className="h2">
-              Article
+              Staffs
             </ModalHeader>
             <ModalBody>
               <form
@@ -366,59 +358,25 @@ export default class Articles extends Component {
                                   {tab.tab !== "pic" &&
                                     tab.list.map((tbli, j) => (
                                       <Col
-                                        className={getFieldClass(tbli.type)}
+                                        className="col-sm-6"
                                         key={`formContent${j}`}
                                       >
                                         <FormGroup>
                                           <label className="form-label">
                                             {tbli.name || ""}
                                           </label>
-                                          {tbli.type !== "textarea" && (
-                                            <Input
-                                              type={tbli.type}
-                                              value={tbli.val || ""}
-                                              name={tbli.field || ""}
-                                              onChange={(e) =>
-                                                this.onInputChange(
-                                                  i,
-                                                  e.target.name,
-                                                  e.target.value
-                                                )
-                                              }
-                                            />
-                                          )}
-                                          {tbli.type === "textarea" && (
-                                            <CKEditor
-                                              editor={ClassicEditor}
-                                              data={tbli.val || ""}
-                                              onInit={(editor) => {
-                                                // You can store the "editor" and use when it is needed.
-                                                console.log(
-                                                  "Editor is ready to use!",
-                                                  editor
-                                                );
-                                              }}
-                                              onChange={(event, editor) => {
-                                                const data = editor.getData();
-                                                this.onInputChange(
-                                                  i,
-                                                  tbli.field,
-                                                  data
-                                                );
-                                                console.log({
-                                                  event,
-                                                  editor,
-                                                  data,
-                                                });
-                                              }}
-                                              onBlur={(event, editor) => {
-                                                //console.log("Blur.", editor);
-                                              }}
-                                              onFocus={(event, editor) => {
-                                                // console.log("Focus.", editor);
-                                              }}
-                                            />
-                                          )}{" "}
+                                          <Input
+                                            type={tbli.type}
+                                            value={tbli.val || ""}
+                                            name={tbli.field || ""}
+                                            onChange={(e) =>
+                                              this.onInputChange(
+                                                i,
+                                                e.target.name,
+                                                e.target.value
+                                              )
+                                            }
+                                          />
                                         </FormGroup>
                                       </Col>
                                     ))}

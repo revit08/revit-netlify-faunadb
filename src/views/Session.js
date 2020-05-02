@@ -1,29 +1,10 @@
 import React, { Component } from "react";
-import classnames from "classnames";
-import FileBase64 from "react-file-base64";
 import { ToastsContainer, ToastsStore } from "react-toasts";
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  TabContent,
-  TabPane,
-  Nav,
-  NavItem,
-  NavLink,
-  Container
-} from "reactstrap";
+import { Row, Col, Card, CardBody } from "reactstrap";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham-dark.css";
 import UserListCard from "./../components/list/userListCard";
-import StaffItemCard from "./../components/item/staffItemCard";
-import FormGroupInput from "./../components/form/formGroupInput";
 import CellLinkRenderer from "./../components/grid/cellLinkRender";
 
 import api from "./../utils/api";
@@ -41,57 +22,56 @@ export default class Sessions extends Component {
     iconTabs: 1,
     textTabs: 4,
     columnDefs: [
-      
       {
         headerName: "Name",
         field: "username",
         sortable: true,
         filter: "agTextColumnFilter",
-        pinned: "left"
+        pinned: "left",
       },
       {
         headerName: "Email",
         field: "email",
-        filter: "agTextColumnFilter"
+        filter: "agTextColumnFilter",
       },
       {
         headerName: "googleID",
         field: "googleID",
-        filter: "agTextColumnFilter"
+        filter: "agTextColumnFilter",
       },
       {
         headerName: "FirstLogin",
         field: "firstlogin",
         sortable: true,
-        filter: "agTextColumnFilter"
+        filter: "agTextColumnFilter",
       },
       {
         headerName: "Recent Login ",
         field: "lastlogin",
         sortable: true,
-        filter: "agTextColumnFilter"
+        filter: "agTextColumnFilter",
       },
       {
         headerName: "Total Login ",
         field: "total",
         sortable: true,
-        filter: "agTextColumnFilter"
-      }
+        filter: "agTextColumnFilter",
+      },
     ],
-    getRowHeight: function(params) {
+    getRowHeight: function (params) {
       return 40;
     },
     defaultColDef: {
       sortable: true,
-      filter: true
+      filter: true,
     },
     frameworkComponents: {
-      CellLinkRenderer
-    }
+      CellLinkRenderer,
+    },
   };
   componentDidMount() {
     // Fetch all todos
-    api.readAllSessions().then(replists => {
+    api.readAllSessions().then((replists) => {
       if (replists.message === "unauthorized") {
         if (isLocalHost()) {
           alert(
@@ -105,8 +85,8 @@ export default class Sessions extends Component {
         return false;
       }
       const optimisedData = [];
-      if(replists.length > 0){
-        replists.forEach(function(item, index) {
+      if (replists.length > 0) {
+        replists.forEach(function (item, index) {
           let itemis = item.data;
           itemis.act = index;
           itemis.id = getSessionId(item);
@@ -114,23 +94,20 @@ export default class Sessions extends Component {
         });
         this.setState({
           replists: replists,
-          gridData: optimisedData
+          gridData: optimisedData,
         });
-      }else{
+      } else {
         this.setState({
           replists: [],
-          gridData: []
+          gridData: [],
         });
       }
-      
     });
   }
-  
 
   saveSession = () => {
     const { sessionModelData } = this.state;
-    sessionModelData.ts=  new Date().getTime() * 10000;
-    
+    sessionModelData.ts = new Date().getTime() * 10000;
 
     if (sessionModelData.id) {
       api
@@ -138,23 +115,23 @@ export default class Sessions extends Component {
         .then(() => {
           ToastsStore.success(`Profile Changes Updated!`);
         })
-        .catch(e => {
+        .catch((e) => {
           console.log("An API error occurred", e);
           ToastsStore.error(`Profile Update Failed!`);
         });
     } else {
       api
         .createSession(sessionModelData)
-        .then(response => {
+        .then((response) => {
           ToastsStore.success(`Profile Created Succesfully!`);
         })
-        .catch(e => {
+        .catch((e) => {
           console.log("An API error occurred", e);
           ToastsStore.error(`Profile Creation Failed!`);
         });
     }
   };
-  deleteSession = e => {
+  deleteSession = (e) => {
     const { replists } = this.state;
     const replistId = e.target.dataset.id;
 
@@ -173,12 +150,12 @@ export default class Sessions extends Component {
       },
       {
         rollbackSession: {},
-        optimisticState: []
+        optimisticState: [],
       }
     );
 
     this.setState({
-      replists: filteredSessions.optimisticState
+      replists: filteredSessions.optimisticState,
     });
 
     // Make API request to delete replist
@@ -187,21 +164,21 @@ export default class Sessions extends Component {
       .then(() => {
         console.log(`deleted replist id ${replistId}`);
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(`There was an error removing ${replistId}`, e);
         // Add item removed back to list
         this.setState({
           replists: filteredSessions.optimisticState.concat(
             filteredSessions.rollbackSession
-          )
+          ),
         });
       });
   };
 
-  onChange = e => {
+  onChange = (e) => {
     console.log("ose", e);
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
   onInputChange = (na, val) => {
@@ -219,7 +196,7 @@ export default class Sessions extends Component {
     sessionModelData.subjects[na] = val;
     this.setState({ sessionModelData });
   };
-  fileChangedHandler = files => {
+  fileChangedHandler = (files) => {
     console.log("file", files);
 
     const { sessionModelData } = this.state;
@@ -238,7 +215,7 @@ export default class Sessions extends Component {
   toggleTabs = (e, stateName, index) => {
     e.preventDefault();
     this.setState({
-      [stateName]: index
+      [stateName]: index,
     });
   };
   download = () => {
@@ -261,7 +238,6 @@ export default class Sessions extends Component {
       const { data } = replist;
       const id = getSessionId(replist);
       // only show delete button after create API response returns
-      
 
       return (
         <div key={i} className="col-12 col-md-6 col-sm-12 col-xl-4">
@@ -292,7 +268,6 @@ export default class Sessions extends Component {
                 <br /> <span className="text-info"> whomever logged</span>
               </h1>
             </Col>
-            
           </Row>
 
           <div className="row">
@@ -317,10 +292,6 @@ export default class Sessions extends Component {
             </Card>
           </div>
         </div>
-
-        
-
-        
       </div>
     );
   }

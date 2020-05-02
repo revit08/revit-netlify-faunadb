@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "bootstrap/dist/css/bootstrap.css";
-import "./assets/plugins/nucleo/css/nucleo.css";
-import "./assets/scss/argon-dashboard-react.scss";
+import "./App.css";
 import "./index.css";
 import App from "./App";
 

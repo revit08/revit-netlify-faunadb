@@ -1,11 +1,8 @@
 import React, { Component } from "react";
-import { NavLink } from "react-router-dom";
-
-import { Container, NavItem, Nav } from "reactstrap";
 export default class Home extends Component {
   state = {
     todos: [],
-    showMenu: false
+    showMenu: false,
   };
   componentDidMount() {
     // Fetch all todos

@@ -22,13 +22,11 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
 
-import Header from "./../components/Headers/Header.js";
 import StaffItemCard from "./../components/item/staffItemCard";
 import FormGroupInput from "./../components/form/formGroupInput";
 import CellLinkRenderer from "./../components/grid/cellLinkRender";
 
 import api from "./../utils/api";
-import sortByDate from "./../utils/sortByDate";
 import isLocalHost from "./../utils/isLocalHost";
 
 const userbase = {
@@ -341,7 +339,6 @@ export default class Staffs extends Component {
   render() {
     return (
       <>
-        <Header />
         <Container className="mt--7" fluid>
           <ToastsContainer store={ToastsStore} />
           <div className="container">
