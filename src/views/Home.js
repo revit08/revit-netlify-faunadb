@@ -1,28 +1,36 @@
 import React, { Component } from "react";
+import netlifyIdentity from "netlify-identity-widget";
+let user = {};
 export default class Home extends Component {
-  state = {
-    todos: [],
-    showMenu: false,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      todos: [],
+    };
+  }
   componentDidMount() {
     // Fetch all todos
   }
-
   render() {
+    console.log(this.props);
+    user = netlifyIdentity.currentUser();
     return (
       <div className="app">
+        <div className="jumbotron">
+          <div className="container">
+            <h1 className="">
+              Welcome{" "}
+              {user && user.user_metadata && user.user_metadata.full_name}!
+            </h1>
+            <p></p>
+            <p></p>
+          </div>
+        </div>
         <div className="full-page lock-page">
           <div className="content">
             <div className="container">
-              <div className="ml-auto mr-auto col-md-6 col-lg-4">
-                <div className="card-lock card-white text-center card">
-                  <div className="card-header"></div>
-                  <div className="card-body">
-                    <h4 className="card-title"> Access Restriceted !</h4>
-                  </div>
-                  <div className="card-footer"></div>
-                </div>
-              </div>
+              <div className="ml-auto mr-auto col-md-6 col-lg-4"></div>
             </div>
           </div>
         </div>

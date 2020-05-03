@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import netlifyIdentity from "netlify-identity-widget";
+import { ToastsContainer, ToastsStore } from "react-toasts";
 import "./App.css";
 import AdminFooter from "./components/Footers/AdminFooter.js";
 import Header from "./components/Header/Header";
@@ -27,7 +28,6 @@ export default class App extends Component {
   componentDidMount() {
     // Fetch all todos
     const user = netlifyIdentity.currentUser();
-    console.log({ user });
     if (user) this.setState({ user });
   }
   login = () => {
@@ -35,7 +35,7 @@ export default class App extends Component {
     console.log("loging...");
     netlifyIdentity.open();
     netlifyIdentity.on("login", (user) => {
-      console.log("user got!", user);
+      ToastsStore.success(`Logged in Succesfully`);
       netlifyIdentity.ctx.setState({ user });
       netlifyIdentity.close();
       //setTimeout(() => navigate("/"), 400);
@@ -47,37 +47,59 @@ export default class App extends Component {
     console.log("logout...");
     netlifyIdentity.logout();
     netlifyIdentity.on("logout", () => {
-      console.log("user logout!");
+      ToastsStore.success(`Logged out Succesfully`);
       netlifyIdentity.ctx.setState({ user: null });
     });
   };
   render() {
     return (
-      <div class="bg-light">
+      <div className="bg-light rootapp">
+        <ToastsContainer store={ToastsStore} />
         <BrowserRouter>
-          <Header {...this.props} routes={routes} />
           {this.state.user ? (
             <div>
-              <p>Welcome: {this.state.user.user_metadata.full_name}</p>
+              {/**
+              *  <p>Welcome: {this.state.user.user_metadata.full_name}</p>
               <button onClick={this.logout}>Log out</button>
+              */}
+
+              <Header
+                {...this.props}
+                user={this.state.user.user_metadata.full_name}
+                logout={this.logout}
+                routes={routes}
+              />
+              <div className="main-content">
+                <Switch>
+                  <Route
+                    exact
+                    path="/"
+                    component={Home}
+                    user={this.state.user.user_metadata.full_name}
+                  />
+                  <Route exact path="/students-list" component={StudentsList} />
+                  <Route exact path="/staffs-list" component={StaffsList} />
+                  <Route exact path="/pages-list" component={PagesList} />
+
+                  <Route exact path="/student/:sid" component={Student} />
+                  <Route exact path="/staffs" component={Staffs} />
+                  <Route exact path="/news-events-list" component={Articles} />
+                  <Route exact path="/userlogged" component={Session} />
+                </Switch>
+              </div>
+              <AdminFooter />
             </div>
           ) : (
-            <button onClick={this.login}>Log in</button>
+            <div className="formSignin text-center">
+              <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+              <button
+                className="btn btn-lg btn-primary btn-block"
+                onClick={this.login}
+              >
+                Log in
+              </button>
+            </div>
           )}
-          <div className="main-content">
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route exact path="/students-list" component={StudentsList} />
-              <Route exact path="/staffs-list" component={StaffsList} />
-              <Route exact path="/pages-list" component={PagesList} />
-
-              <Route exact path="/student/:sid" component={Student} />
-              <Route exact path="/staffs" component={Staffs} />
-              <Route exact path="/news-events-list" component={Articles} />
-              <Route exact path="/userlogged" component={Session} />
-            </Switch>
-            <AdminFooter />
-          </div>
         </BrowserRouter>
       </div>
     );

@@ -16,7 +16,7 @@ import {
 
 const Header = (props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { routes } = props;
+  const { routes, user, logout } = props;
   const toggle = () => setIsOpen(!isOpen);
 
   return (
@@ -39,17 +39,33 @@ const Header = (props) => {
             </Nav>
             <Nav>
               <NavItem>
-                <NavLink href="https://revit08.netlify.app">Frontend</NavLink>
+                <NavLink
+                  className="btn  btn btn-outline-primary"
+                  href="https://revit08.netlify.app"
+                  target="_blank"
+                >
+                  Frontend
+                </NavLink>
               </NavItem>
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
-                  User
+                  {user}
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem>Option 1</DropdownItem>
-                  <DropdownItem>Option 2</DropdownItem>
+                  <DropdownItem>
+                    <NavLink href="/profile">Your Profile</NavLink>
+                  </DropdownItem>
+                  <DropdownItem>
+                    <NavLink href="/app-setting"> Settings</NavLink>
+                  </DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem>Reset</DropdownItem>
+                  <DropdownItem
+                    onClick={() => {
+                      logout();
+                    }}
+                  >
+                    Log Out
+                  </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
             </Nav>
