@@ -277,6 +277,45 @@ const deletePage = (studentId) => {
     return response.json();
   });
 };
+
+const readAllSubjects = () => {
+  return fetch("/.netlify/functions/subject-read-all").then((response) => {
+    return response.json();
+  });
+};
+
+const createSubject = (data) => {
+  return fetch("/.netlify/functions/subject-new", {
+    body: JSON.stringify(data),
+    method: "POST",
+  }).then((response) => {
+    return response.json();
+  });
+};
+const readSubject = (todoId) => {
+  return fetch(`/.netlify/functions/subject-read/${todoId}`).then(
+    (response) => {
+      return response.json();
+    }
+  );
+};
+
+const updateSubject = (studentId, data) => {
+  return fetch(`/.netlify/functions/subject-update/${studentId}`, {
+    body: JSON.stringify(data),
+    method: "POST",
+  }).then((response) => {
+    return response.json();
+  });
+};
+
+const deleteSubject = (studentId) => {
+  return fetch(`/.netlify/functions/subject-delete/${studentId}`, {
+    method: "POST",
+  }).then((response) => {
+    return response.json();
+  });
+};
 export default {
   create: create,
   readAll: readAll,
@@ -312,4 +351,9 @@ export default {
   updateSession: updateSession,
   deleteSession: deleteSession,
   batchDeleteSessions: batchDeleteSessions,
+  createSubject: createSubject,
+  readAllSubjects: readAllSubjects,
+  readSubject: readSubject,
+  updateSubject: updateSubject,
+  deleteSubject: deleteSubject,
 };

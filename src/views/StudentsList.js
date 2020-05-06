@@ -229,8 +229,8 @@ export default class StudentsList extends Component {
   download = () => {
     const { gridParams } = this.state;
     const params = {
-      fileName: "JJCET",
-      sheetName: "JJCET",
+     fileName: "Revit2k8-students",
+      sheetName: "students",
       processCellCallback(paramsl) {
         return downloadExcelFormat(paramsl);
       },

@@ -1,5 +1,5 @@
 import isLocalHost from "./isLocalHost";
-
+import { inputAll } from "../constants/Format";
 export const setFlter = (type) => {
   switch (type) {
     case "number":
@@ -12,7 +12,17 @@ export const setFlter = (type) => {
       return "agTextColumnFilter";
   }
 };
-
+export const setDataFormat = (value, type) => {
+  switch (type) {
+    case "number":
+      return Number(value);
+    case "text":
+    case "email":
+      return String(value.trim());
+    default:
+      return value.trim();
+  }
+};
 export const getFieldClass = (type) => {
   switch (type) {
     case "textarea":
@@ -29,6 +39,7 @@ export const gridConfigure = (list) => {
       field: "id",
       sortable: false,
       filter: false,
+      width: 66,
     },
   ];
   list.forEach(function (item) {
@@ -39,10 +50,8 @@ export const gridConfigure = (list) => {
         sortable: true,
         filter: setFlter(i.type),
       };
-      if (
-        item.tab === "basic" &&
-        (i.field === "fName" || i.field === "title")
-      ) {
+      const listArr = ["fName", "title", "Name"];
+      if (item.tab === "basic" && listArr.includes(i.field)) {
         col.pinned = "left";
         col.cellRenderer = "CellLinkRenderer";
       }
@@ -53,15 +62,21 @@ export const gridConfigure = (list) => {
   return gridConfig;
 };
 
-export const getGridData = (list) => {
+export const getGridData = (list, format) => {
   const result = [];
   list.forEach(function (item) {
     let row = {};
 
     Object.keys(item).forEach(function (i) {
+      const backList = format.find((o) => o.tab === i);
       if (Array.isArray(item[i]) && item[i].length > 0) {
         item[i].forEach(function (j) {
-          row[`${i}_${j.field}`] = j.val || "";
+          if (backList && backList.list) {
+            const f = backList.list.find((o) => o.field === j.field);
+            row[`${i}_${j.field}`] = j.val ? setDataFormat(j.val, f.type) : "";
+          } else {
+            row[`${i}_${j.field}`] = j.val ? setDataFormat(j.val, "text") : "";
+          }
         });
       }
       if (i === "id") {
@@ -83,8 +98,9 @@ export const getListData = (list, format) => {
       if (tab.list && item[tab.tab]) {
         if (listArr.includes(tab.tab)) {
           tab.list.forEach(function (field, k) {
-            field.val = item[tab.tab][k].val || "";
-            console.log();
+            field.val = item[tab.tab][k].val
+              ? setDataFormat(item[tab.tab][k].val, field.type)
+              : "";
           });
         } else {
           tab.list = item[tab.tab];

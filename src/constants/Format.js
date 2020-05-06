@@ -473,4 +473,55 @@ export const inputAll = {
       list: [],
     },
   ],
+  Subject: [
+    {
+      id: 5001,
+      name: "Basic Info",
+      tab: "basic",
+      list: [
+        {
+          id: 50011,
+          type: "text",
+          field: "Name",
+          name: "Title",
+          val: "",
+        },
+        {
+          id: 50012,
+          type: "text",
+          field: "code",
+          name: "Code",
+          val: "",
+        },
+        {
+          id: 50014,
+          type: "textarea",
+          field: "desC",
+          name: "Description",
+          val: "",
+        },
+        {
+          id: 50012,
+          type: "number",
+          field: "semN",
+          name: "semester",
+          val: "",
+        },
+        {
+          id: 50012,
+          type: "arr",
+          field: "facL",
+          name: "facalty",
+          val: "",
+        },
+        {
+          id: 50012,
+          type: "arr",
+          field: "comN",
+          name: "Comments",
+          val: "",
+        },
+      ],
+    },
+  ],
 };

@@ -31,6 +31,7 @@ export default class CellLinkRenderer extends Component {
         );
       case "basic_fName":
       case "basic_title":
+      case "basic_Name":
         return (
           <span>
             <span
@@ -40,6 +41,7 @@ export default class CellLinkRenderer extends Component {
               <i className="fa fa-pencil-square-o" aria-hidden="true"></i>{" "}
               {data.basic_fName}
               {data.basic_title}
+              {data.basic_Name}
             </span>
 
             {/*

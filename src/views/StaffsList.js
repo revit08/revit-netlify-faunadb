@@ -81,7 +81,7 @@ export default class StaffsList extends Component {
         });
         this.setState({
           itemList: getListData(optimisedData, inputAll.staff),
-          itemGrid: getGridData(optimisedData),
+          itemGrid: getGridData(optimisedData, inputAll.staff),
         });
       }
     });
@@ -229,8 +229,8 @@ export default class StaffsList extends Component {
   download = () => {
     const { gridParams } = this.state;
     const params = {
-      fileName: "JJCET",
-      sheetName: "JJCET",
+       fileName: "Revit2k8-Staffs",
+      sheetName: "Staffs",
       processCellCallback(paramsl) {
         return downloadExcelFormat(paramsl);
       },

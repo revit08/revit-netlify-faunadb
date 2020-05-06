@@ -85,7 +85,7 @@ export default class PagesList extends Component {
         });
         this.setState({
           itemList: getListData(optimisedData, inputAll.pages),
-          itemGrid: getGridData(optimisedData),
+          itemGrid: getGridData(optimisedData, inputAll.pages),
         });
       }
     });
@@ -245,8 +245,8 @@ export default class PagesList extends Component {
   download = () => {
     const { gridParams } = this.state;
     const params = {
-      fileName: "JJCET",
-      sheetName: "JJCET",
+       fileName: "Revit2k8-Pages",
+      sheetName: "Pages",
       processCellCallback(paramsl) {
         return downloadExcelFormat(paramsl);
       },

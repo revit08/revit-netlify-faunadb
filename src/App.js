@@ -10,6 +10,7 @@ import Home from "./views/Home";
 import StudentsList from "./views/StudentsList";
 import StaffsList from "./views/StaffsList";
 import PagesList from "./views/PagesList";
+import SubjectsList from "./views/SubjectsList";
 import Student from "./views/Student";
 import Staffs from "./views/Staffs";
 import Articles from "./views/Articles";
@@ -81,6 +82,7 @@ export default class App extends Component {
                   <Route exact path="/staffs-list" component={StaffsList} />
                   <Route exact path="/pages-list" component={PagesList} />
 
+                  <Route exact path="/subjects-list" component={SubjectsList} />
                   <Route exact path="/student/:sid" component={Student} />
                   <Route exact path="/staffs" component={Staffs} />
                   <Route exact path="/news-events-list" component={Articles} />
@@ -91,7 +93,7 @@ export default class App extends Component {
             </div>
           ) : (
             <div className="formSignin text-center">
-              <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+              <h1 className="h3 mb-3 font-weight-normal">Please sign in</h1>
               <button
                 className="btn btn-lg btn-primary btn-block"
                 onClick={this.login}

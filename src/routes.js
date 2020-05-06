@@ -1,5 +1,6 @@
 import Students from "./views/Students";
 import Staffs from "./views/Staffs";
+import SubjectsList from "./views/SubjectsList";
 
 var routes = [
   {
@@ -13,6 +14,12 @@ var routes = [
     name: "Staffs",
     icon: "ni ni-planet text-blue",
     component: Staffs,
+  },
+  {
+    path: "/subjects-list",
+    name: "Subjects",
+    icon: "ni ni-planet text-blue",
+    component: SubjectsList,
   },
   {
     path: "/pages-list",
