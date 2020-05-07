@@ -10,11 +10,11 @@ import Home from "./views/Home";
 import StudentsList from "./views/StudentsList";
 import StaffsList from "./views/StaffsList";
 import PagesList from "./views/PagesList";
-import SubjectsList from "./views/SubjectsList";
+import SemesterList from "./views/SemesterList";
 import Student from "./views/Student";
 import Staffs from "./views/Staffs";
 import Articles from "./views/Articles";
-import Session from "./views/Session";
+import Sessions from "./views/Session";
 
 import routes from "./routes.js";
 export default class App extends Component {
@@ -81,12 +81,12 @@ export default class App extends Component {
                   <Route exact path="/students-list" component={StudentsList} />
                   <Route exact path="/staffs-list" component={StaffsList} />
                   <Route exact path="/pages-list" component={PagesList} />
+                  <Route exact path="/semester-list" component={SemesterList} />
+                  <Route exact path="/sessions" component={Sessions} />
 
-                  <Route exact path="/subjects-list" component={SubjectsList} />
                   <Route exact path="/student/:sid" component={Student} />
                   <Route exact path="/staffs" component={Staffs} />
                   <Route exact path="/news-events-list" component={Articles} />
-                  <Route exact path="/userlogged" component={Session} />
                 </Switch>
               </div>
               <AdminFooter />

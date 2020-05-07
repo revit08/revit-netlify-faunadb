@@ -1,9 +1,17 @@
 import React, { Component } from "react";
 import { ToastsContainer, ToastsStore } from "react-toasts";
-import { Row, Col, Card, CardBody } from "reactstrap";
+import {
+  Button,
+  Row,
+  Col,
+  Card,
+  CardBody,
+  Container,
+  ButtonGroup,
+} from "reactstrap";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham-dark.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import UserListCard from "./../components/list/userListCard";
 import CellLinkRenderer from "./../components/grid/cellLinkRender";
 
@@ -257,42 +265,52 @@ export default class Sessions extends Component {
   }
   render() {
     return (
-      <div className="app">
-        <ToastsContainer store={ToastsStore} />
-        <div className="container">
-          <Row>
-            <Col md="4">
-              <hr className="line-info" />
-              <h1>
-                Sessions List
-                <br /> <span className="text-info"> whomever logged</span>
-              </h1>
-            </Col>
-          </Row>
-
-          <div className="row">
-            {/*this.renderSessions()*/}
-            <Card className="card-coin card-plain">
-              <CardBody>
-                <div
-                  style={{ height: "70vh", width: "100%" }}
-                  className="ag-theme-balham-dark"
-                >
-                  <AgGridReact
-                    columnDefs={this.state.columnDefs}
-                    defaultColDef={this.state.defaultColDef}
-                    floatingFilter={true}
-                    rowData={this.state.gridData}
-                    getRowHeight={this.state.getRowHeight}
-                    context={this.state.context}
-                    frameworkComponents={this.state.frameworkComponents}
-                  ></AgGridReact>
-                </div>
-              </CardBody>
-            </Card>
+      <>
+        <Container className="pt-3" fluid>
+          <ToastsContainer store={ToastsStore} />
+          <div className="container">
+            <div className="row">
+              <Col md="12">
+                <Card className="card-coin card-plain">
+                  <CardBody>
+                    <div
+                      style={{ height: "70vh", width: "100%" }}
+                      className="ag-theme-alpine"
+                    >
+                      <Row className="align-items-center pb-2">
+                        <div className="col">
+                          <h4 className="mb-0">Pages List</h4>
+                        </div>
+                        <div className="col text-right">
+                          <ButtonGroup size="sm">
+                            <Button onClick={this.newitemModView}>
+                              <i className="fa fa-plus"></i> ADD
+                            </Button>
+                            <Button onClick={this.download}>
+                              <i className="fa fa-download"></i> DOWNLOAD
+                            </Button>
+                          </ButtonGroup>
+                        </div>
+                      </Row>
+                      <AgGridReact
+                        columnDefs={this.state.columnDefs}
+                        defaultColDef={this.state.defaultColDef}
+                        floatingFilter={true}
+                        rowData={this.state.gridData}
+                        getRowHeight={this.state.getRowHeight}
+                        context={this.state.context}
+                        frameworkComponents={this.state.frameworkComponents}
+                      ></AgGridReact>
+                      <br />
+                    </div>
+                    <br /> <br /> <br />
+                  </CardBody>
+                </Card>
+              </Col>
+            </div>
           </div>
-        </div>
-      </div>
+        </Container>
+      </>
     );
   }
 }

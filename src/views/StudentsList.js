@@ -81,7 +81,7 @@ export default class StudentsList extends Component {
         });
         this.setState({
           itemList: getListData(optimisedData, inputAll.student),
-          itemGrid: getGridData(optimisedData),
+          itemGrid: getGridData(optimisedData, inputAll.student),
         });
       }
     });
@@ -229,7 +229,7 @@ export default class StudentsList extends Component {
   download = () => {
     const { gridParams } = this.state;
     const params = {
-     fileName: "Revit2k8-students",
+      fileName: "Revit2k8-students",
       sheetName: "students",
       processCellCallback(paramsl) {
         return downloadExcelFormat(paramsl);

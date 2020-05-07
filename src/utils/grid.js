@@ -20,7 +20,7 @@ export const setDataFormat = (value, type) => {
     case "email":
       return String(value.trim());
     default:
-      return value.trim();
+      return value;
   }
 };
 export const getFieldClass = (type) => {
@@ -39,7 +39,9 @@ export const gridConfigure = (list) => {
       field: "id",
       sortable: false,
       filter: false,
-      width: 66,
+      width: 120,
+      pinned: "left",
+      cellRenderer: "CellLinkRenderer",
     },
   ];
   list.forEach(function (item) {
@@ -52,8 +54,7 @@ export const gridConfigure = (list) => {
       };
       const listArr = ["fName", "title", "Name"];
       if (item.tab === "basic" && listArr.includes(i.field)) {
-        col.pinned = "left";
-        col.cellRenderer = "CellLinkRenderer";
+      } else {
       }
       gridConfig.push(col);
     });
@@ -62,6 +63,34 @@ export const gridConfigure = (list) => {
   return gridConfig;
 };
 
+export const gridStudConfigure = (list) => {
+  const gridConfig = [
+    {
+      headerName: "ID",
+      field: "id",
+      sortable: false,
+      filter: false,
+      width: 120,
+      pinned: "left",
+      rowDrag: true,
+    },
+  ];
+  list.forEach(function (item) {
+    item.list.forEach(function (i, j) {
+      let col = {
+        headerName: i.name,
+        field: `basic_${i.field}`,
+        sortable: true,
+        editable: true,
+        filter: setFlter(i.type),
+      };
+
+      gridConfig.push(col);
+    });
+  });
+  console.log("gridConfig", gridConfig);
+  return gridConfig;
+};
 export const getGridData = (list, format) => {
   const result = [];
   list.forEach(function (item) {
@@ -90,7 +119,7 @@ export const getGridData = (list, format) => {
 
 export const getListData = (list, format) => {
   const result = [];
-  const listArr = ["basic", "contact", "social", "subjects"];
+  const listArr = ["basic", "contact", "social"];
   list.forEach(function (item, i) {
     const ob = { data: [], id: item.id };
     const dataFormat = JSON.parse(JSON.stringify(format));

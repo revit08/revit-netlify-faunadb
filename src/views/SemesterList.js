@@ -35,6 +35,7 @@ import { inputAll } from "../constants/Format";
 
 import {
   gridConfigure,
+  gridStudConfigure,
   getRecordID,
   getGridData,
   downloadExcelFormat,
@@ -42,7 +43,7 @@ import {
   responseValidator,
   getFieldClass,
 } from "../utils/grid";
-export default class SubjectsList extends Component {
+export default class SemesterList extends Component {
   constructor(props) {
     super(props);
 
@@ -51,10 +52,11 @@ export default class SubjectsList extends Component {
       cardview: false,
       context: { componentParent: this },
 
-      itemModInfo: JSON.parse(JSON.stringify(inputAll.Subject)),
+      itemModInfo: JSON.parse(JSON.stringify(inputAll.Semester)),
       itemModView: false,
       itemModTab: 1,
-      columnDefs: gridConfigure(inputAll.Subject),
+      columnDefs: gridConfigure(inputAll.Semester),
+      columnSubDefs: gridStudConfigure(inputAll.Subjects),
       getRowHeight: function (params) {
         return 40;
       },
@@ -66,6 +68,7 @@ export default class SubjectsList extends Component {
         CellLinkRenderer,
       },
       gridParams: {},
+      gridSubjParams: {},
       itemList: [],
       itemGrid: [],
     };
@@ -74,7 +77,7 @@ export default class SubjectsList extends Component {
   }
 
   componentDidMount() {
-    api.readAllSubjects().then((itemList) => {
+    api.readAllSemesters().then((itemList) => {
       responseValidator(itemList);
       const optimisedData = [];
       if (itemList.length > 0) {
@@ -84,8 +87,8 @@ export default class SubjectsList extends Component {
           optimisedData.push(itemis);
         });
         this.setState({
-          itemList: getListData(optimisedData, inputAll.Subject),
-          itemGrid: getGridData(optimisedData, inputAll.Subject),
+          itemList: getListData(optimisedData, inputAll.Semester),
+          itemGrid: getGridData(optimisedData, inputAll.Semester),
         });
       }
     });
@@ -98,52 +101,67 @@ export default class SubjectsList extends Component {
   };
 
   saveItem = () => {
-    const { itemModInfo } = this.state;
+    const { itemModInfo, gridSubjParams } = this.state;
     // itemModInfo.ts = new Date().getTime() * 10000;
     const updateApiArr = JSON.parse(JSON.stringify(itemModInfo.data));
     const updateApiData = {};
+
+    const newGridCodes = [];
+    gridSubjParams.api.forEachNode((node, index) => {
+      const newNode = JSON.parse(JSON.stringify(node.data));
+      const { value } = newNode;
+      if (value) {
+        newNode.value = value.toString().trim();
+      }
+      newNode.serial = index + 1;
+      newGridCodes.push(newNode);
+    });
+    console.log(newGridCodes);
+
     updateApiArr.forEach(function (item) {
       if (item.tab !== "pic") {
         item.list.forEach(function (field) {
-          console.log(field);
           delete field["id"];
           delete field["type"];
         });
       }
+
       updateApiData[item.tab] = item.list;
       updateApiData.modified = new Date().getTime() * 10000;
     });
+    updateApiData.subjects = newGridCodes;
+    console.log(updateApiData);
     if (itemModInfo.id) {
       api
-        .updateSubject(itemModInfo.id, updateApiData)
+        .updateSemester(itemModInfo.id, updateApiData)
         .then(() => {
-          ToastsStore.success(`Subject Changes Updated!`);
+          ToastsStore.success(`Semester Changes Updated!`);
         })
         .catch((e) => {
-          ToastsStore.error(`Subject Update Failed!`);
+          ToastsStore.error(`Semester Update Failed!`);
         });
     } else {
       updateApiData.created = new Date().getTime() * 10000;
       api
-        .createSubject(updateApiData)
+        .createSemester(updateApiData)
         .then((response) => {
-          ToastsStore.success(`Subject Created Succesfully!`);
+          ToastsStore.success(`Semester Created Succesfully!`);
         })
         .catch((e) => {
-          ToastsStore.error(`Subject Creation Failed!`);
+          ToastsStore.error(`Semester Creation Failed!`);
         });
     }
   };
-  deleteSubject = (e) => {
+  deleteSemester = (e) => {
     const { itemList } = this.state;
     const replistId = e.target.dataset.id;
 
     // Optimistically remove replist from UI
-    const filteredSubjects = itemList.reduce(
+    const filteredSemesters = itemList.reduce(
       (acc, current) => {
         const currentId = getRecordID(current);
         if (currentId === replistId) {
-          acc.rollbackSubject = current;
+          acc.rollbackSemester = current;
           return acc;
         }
         // filter deleted replist out of the itemList list
@@ -151,26 +169,26 @@ export default class SubjectsList extends Component {
         return acc;
       },
       {
-        rollbackSubject: {},
+        rollbackSemester: {},
         optimisticState: [],
       }
     );
 
     this.setState({
-      itemList: filteredSubjects.optimisticState,
+      itemList: filteredSemesters.optimisticState,
     });
 
     // Make API request to delete replist
     api
-      .deleteSubject(replistId)
+      .deleteSemester(replistId)
       .then(() => {
         ToastsStore.success(`deleted replist id ${replistId}`);
       })
       .catch((e) => {
         ToastsStore.success(`There was an error removing ${replistId}`, e);
         this.setState({
-          itemList: filteredSubjects.optimisticState.concat(
-            filteredSubjects.rollbackSubject
+          itemList: filteredSemesters.optimisticState.concat(
+            filteredSemesters.rollbackSemester
           ),
         });
       });
@@ -178,7 +196,7 @@ export default class SubjectsList extends Component {
 
   newitemModView = () => {
     const itemDoc = {
-      data: JSON.parse(JSON.stringify(inputAll.Subject)),
+      data: JSON.parse(JSON.stringify(inputAll.Semester)),
     };
 
     this.setState({
@@ -191,7 +209,7 @@ export default class SubjectsList extends Component {
 
   openUserModal = (id) => {
     const itemDoc = this.state.itemList.find((o) => o.id === id);
-    //const itemDoc = JSON.parse(JSON.stringify(inputAll.Subject));
+    //const itemDoc = JSON.parse(JSON.stringify(inputAll.Semester));
 
     this.setState({
       itemModInfo: itemDoc,
@@ -246,8 +264,8 @@ export default class SubjectsList extends Component {
   download = () => {
     const { gridParams } = this.state;
     const params = {
-      fileName: "Revit2k8-Subjects",
-      sheetName: "Subjects",
+      fileName: "Revit2k8-Semesters",
+      sheetName: "Semesters",
       processCellCallback(paramsl) {
         return downloadExcelFormat(paramsl);
       },
@@ -268,9 +286,41 @@ export default class SubjectsList extends Component {
       }
     }
   };
+  setSubParams = (sparams) => {
+    if (sparams) {
+      this.setState({ gridSubjParams: sparams });
+
+      try {
+        sparams.api.setSuppressClipboardPaste(false);
+        sparams.api.copySelectedRowsToClipboard(false);
+        sparams.api.closeToolPanel();
+      } catch (e) {
+        // this will run only if the code in the try block errors-out
+      }
+    }
+  };
+  addNewSubject = () => {
+    const { gridSubjParams } = this.state;
+    const CurrentGridData = [];
+    gridSubjParams.api.forEachNode((node) => CurrentGridData.push(node.data));
+    let newIndex = CurrentGridData.length;
+    const newRcode = {
+      name: "",
+      code: "",
+      desc: "ACTIVE",
+      facalty: "ACTIVE",
+    };
+    gridSubjParams.api.updateRowData({ add: [newRcode], addIndex: newIndex });
+
+    gridSubjParams.api.setFocusedCell(newIndex, "basic_sName");
+    gridSubjParams.api.startEditingCell({
+      rowIndex: newIndex,
+      colKey: "basic_sName",
+    });
+  };
   render() {
     const { itemModInfo } = this.state;
-    // console.log(itemModInfo);
+    console.log(itemModInfo);
     return (
       <>
         <Container className="pt-3" fluid>
@@ -286,7 +336,7 @@ export default class SubjectsList extends Component {
                     >
                       <Row className="align-items-center pb-2">
                         <div className="col">
-                          <h4 className="mb-0">Subjects List</h4>
+                          <h4 className="mb-0">Semesters List</h4>
                         </div>
                         <div className="col text-right">
                           <ButtonGroup size="sm">
@@ -324,7 +374,7 @@ export default class SubjectsList extends Component {
             className="modal-lg lg"
           >
             <ModalHeader toggle={this.toggle} className="h2">
-              Subject
+              Semester
             </ModalHeader>
             <ModalBody>
               <form
@@ -373,6 +423,7 @@ export default class SubjectsList extends Component {
                               <Container fluid className="pt-3">
                                 <Row>
                                   {tab.tab !== "pic" &&
+                                    tab.tab !== "subjects" &&
                                     tab.list.map((tbli, j) => (
                                       <Col
                                         className={getFieldClass(tbli.type)}
@@ -452,6 +503,33 @@ export default class SubjectsList extends Component {
                                             src={`${tab.list[0].base64}`}
                                           />
                                         )}
+                                    </div>
+                                  )}
+                                  {tab.tab === "subjects" && (
+                                    <div class="container-fluid">
+                                      <Button onClick={this.addNewSubject}>
+                                        <i className="fa fa-plus"></i> ADD
+                                      </Button>{" "}
+                                      <div
+                                        style={{
+                                          height: "70vh",
+                                          width: "100%",
+                                        }}
+                                        className="ag-theme-alpine"
+                                      >
+                                        <AgGridReact
+                                          columnDefs={this.state.columnSubDefs}
+                                          defaultColDef={
+                                            this.state.defaultColDef
+                                          }
+                                          floatingFilter={true}
+                                          rowData={tab.list}
+                                          onGridReady={this.setSubParams}
+                                          enableCellChangeFlash={true}
+                                          rowDragManaged={true}
+                                          animateRows={true}
+                                        ></AgGridReact>
+                                      </div>
                                     </div>
                                   )}
                                 </Row>

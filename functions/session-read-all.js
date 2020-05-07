@@ -1,33 +1,32 @@
-import faunadb from 'faunadb'
+/* Import faunaDB sdk */
+const faunadb = require("faunadb");
+const q = faunadb.query;
 
-const q = faunadb.query
-const client = new faunadb.Client({
-  secret: process.env.FAUNADB_SERVER_SECRET
-})
-
-exports.handler = (session, context, callback) => {
-  // console.log('Function `session-read-all` invoked')
-  return client.query(q.Paginate(q.Match(q.Ref('indexes/all_session'))))
+exports.handler = (event, context) => {
+  const client = new faunadb.Client({
+    secret: process.env.FAUNADB_SERVER_SECRET,
+  });
+  return client
+    .query(q.Paginate(q.Match(q.Ref("indexes/sessions"))))
     .then((response) => {
-      const sessionRefs = response.data
-      // console.log('Todo refs', sessionRefs)
-      // console.log(`${sessionRefs.length} sessions found`)
-      // create new query out of session refs. http://bit.ly/2LG3MLg
-      const getAllTodoDataQuery = sessionRefs.map((ref) => {
-        return q.Get(ref)
-      })
-      // then query the refs
+      const todoRefs = response.data;
+      const getAllTodoDataQuery = todoRefs.map((ref) => {
+        return q.Get(ref);
+      });
       return client.query(getAllTodoDataQuery).then((ret) => {
-        return callback(null, {
+        return {
           statusCode: 200,
-          body: JSON.stringify(ret)
-        })
-      })
-    }).catch((error) => {
-      // console.log('error', error)
-      return callback(null, {
-        statusCode: 400,
-        body: JSON.stringify(error)
-      })
+
+          body: JSON.stringify(ret),
+        };
+      });
     })
-}
+    .catch((error) => {
+      console.log("error", error);
+      return {
+        statusCode: 400,
+
+        body: JSON.stringify(error),
+      };
+    });
+};

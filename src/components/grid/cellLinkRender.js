@@ -32,6 +32,7 @@ export default class CellLinkRenderer extends Component {
       case "basic_fName":
       case "basic_title":
       case "basic_Name":
+      case "id":
         return (
           <span>
             <span
@@ -42,6 +43,7 @@ export default class CellLinkRenderer extends Component {
               {data.basic_fName}
               {data.basic_title}
               {data.basic_Name}
+              {data.id}
             </span>
 
             {/*

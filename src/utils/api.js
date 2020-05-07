@@ -278,13 +278,13 @@ const deletePage = (studentId) => {
   });
 };
 
-const readAllSubjects = () => {
+const readAllSemesters = () => {
   return fetch("/.netlify/functions/subject-read-all").then((response) => {
     return response.json();
   });
 };
 
-const createSubject = (data) => {
+const createSemester = (data) => {
   return fetch("/.netlify/functions/subject-new", {
     body: JSON.stringify(data),
     method: "POST",
@@ -292,7 +292,7 @@ const createSubject = (data) => {
     return response.json();
   });
 };
-const readSubject = (todoId) => {
+const readSemester = (todoId) => {
   return fetch(`/.netlify/functions/subject-read/${todoId}`).then(
     (response) => {
       return response.json();
@@ -300,7 +300,7 @@ const readSubject = (todoId) => {
   );
 };
 
-const updateSubject = (studentId, data) => {
+const updateSemester = (studentId, data) => {
   return fetch(`/.netlify/functions/subject-update/${studentId}`, {
     body: JSON.stringify(data),
     method: "POST",
@@ -309,7 +309,7 @@ const updateSubject = (studentId, data) => {
   });
 };
 
-const deleteSubject = (studentId) => {
+const deleteSemester = (studentId) => {
   return fetch(`/.netlify/functions/subject-delete/${studentId}`, {
     method: "POST",
   }).then((response) => {
@@ -351,9 +351,9 @@ export default {
   updateSession: updateSession,
   deleteSession: deleteSession,
   batchDeleteSessions: batchDeleteSessions,
-  createSubject: createSubject,
-  readAllSubjects: readAllSubjects,
-  readSubject: readSubject,
-  updateSubject: updateSubject,
-  deleteSubject: deleteSubject,
+  createSemester: createSemester,
+  readAllSemesters: readAllSemesters,
+  readSemester: readSemester,
+  updateSemester: updateSemester,
+  deleteSemester: deleteSemester,
 };

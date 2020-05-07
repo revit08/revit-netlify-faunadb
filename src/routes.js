@@ -1,6 +1,7 @@
 import Students from "./views/Students";
 import Staffs from "./views/Staffs";
-import SubjectsList from "./views/SubjectsList";
+import SemesterList from "./views/SemesterList";
+import Sessions from "./views/Session";
 
 var routes = [
   {
@@ -16,10 +17,10 @@ var routes = [
     component: Staffs,
   },
   {
-    path: "/subjects-list",
-    name: "Subjects",
+    path: "/semester-list",
+    name: "Semesters",
     icon: "ni ni-planet text-blue",
-    component: SubjectsList,
+    component: SemesterList,
   },
   {
     path: "/pages-list",
@@ -32,6 +33,12 @@ var routes = [
     name: "News & Events",
     icon: "ni ni-planet text-blue",
     component: Staffs,
+  },
+  {
+    path: "/sessions",
+    name: "Sessions",
+    icon: "ni ni-planet text-blue",
+    component: Sessions,
   },
 ];
 export default routes;
