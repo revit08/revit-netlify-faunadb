@@ -319,6 +319,12 @@ export default class SemesterList extends Component {
       colKey: "basic_sName",
     });
   };
+
+  deleteSubject = () => {
+    const { gridSubjParams } = this.state;
+    var selectedData = gridSubjParams.api.getSelectedRows();
+    gridSubjParams.api.updateRowData({ remove: selectedData });
+  };
   render() {
     const { itemModInfo } = this.state;
     // console.log(itemModInfo);
@@ -511,6 +517,10 @@ export default class SemesterList extends Component {
                                       <Button onClick={this.addNewSubject}>
                                         <i className="fa fa-plus"></i> ADD
                                       </Button>{" "}
+                                      <Button onClick={this.deleteSubject}>
+                                        <i className="fa fa-trash"></i> DELETE
+                                        SELECTED
+                                      </Button>{" "}
                                       <div
                                         style={{
                                           height: "70vh",
@@ -529,6 +539,7 @@ export default class SemesterList extends Component {
                                           enableCellChangeFlash={true}
                                           rowDragManaged={true}
                                           animateRows={true}
+                                          rowSelection="single"
                                         ></AgGridReact>
                                       </div>
                                     </div>

@@ -8,8 +8,25 @@ export const setFlter = (type) => {
       return "agDateColumnFilter";
     case "email":
       return "agTextColumnFilter";
+    case "textarea":
+      return "agLargeTextCellEditor";
     default:
       return "agTextColumnFilter";
+  }
+};
+
+export const setEditor = (type) => {
+  switch (type) {
+    case "number":
+      return "agNumberColumnFilter";
+    case "date":
+      return "agDateColumnFilter";
+    case "select":
+      return "agRichSelectCellEditor";
+    case "textarea":
+      return "agLargeTextCellEditor";
+    default:
+      return "";
   }
 };
 export const setDataFormat = (value, type) => {
