@@ -192,7 +192,7 @@ const batchDeleteArticles = (articleIds) => {
 };
 
 const createSession = (data) => {
-  return fetch("/.netlify/functions/session-create", {
+  return fetch("/.netlify/functions/session-create-new", {
     body: JSON.stringify(data),
     method: "POST",
   }).then((response) => {

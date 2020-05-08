@@ -114,6 +114,7 @@ export default class SemesterList extends Component {
         newNode.value = value.toString().trim();
       }
       newNode.serial = index + 1;
+      console.log(newNode);
       newGridCodes.push(newNode);
     });
     console.log(newGridCodes);
@@ -289,7 +290,7 @@ export default class SemesterList extends Component {
   setSubParams = (sparams) => {
     if (sparams) {
       this.setState({ gridSubjParams: sparams });
-
+      console.log(sparams);
       try {
         sparams.api.setSuppressClipboardPaste(false);
         sparams.api.copySelectedRowsToClipboard(false);
@@ -305,10 +306,10 @@ export default class SemesterList extends Component {
     gridSubjParams.api.forEachNode((node) => CurrentGridData.push(node.data));
     let newIndex = CurrentGridData.length;
     const newRcode = {
-      name: "",
-      code: "",
-      desc: "ACTIVE",
-      facalty: "ACTIVE",
+      basic_sName: "",
+      basic_sCode: "",
+      basic_sDesc: "",
+      basic_sTaff: "",
     };
     gridSubjParams.api.updateRowData({ add: [newRcode], addIndex: newIndex });
 
@@ -320,7 +321,7 @@ export default class SemesterList extends Component {
   };
   render() {
     const { itemModInfo } = this.state;
-    console.log(itemModInfo);
+    // console.log(itemModInfo);
     return (
       <>
         <Container className="pt-3" fluid>

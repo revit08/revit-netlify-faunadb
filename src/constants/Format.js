@@ -486,18 +486,19 @@ export const inputAll = {
           name: "Title",
           val: "",
         },
-        {
-          id: 50014,
-          type: "textarea",
-          field: "sDesc",
-          name: "Description",
-          val: "",
-        },
+
         {
           id: 50012,
           type: "text",
           field: "sCord",
           name: "Coordinator",
+          val: "",
+        },
+        {
+          id: 50014,
+          type: "textarea",
+          field: "sDesc",
+          name: "Description",
           val: "",
         },
       ],

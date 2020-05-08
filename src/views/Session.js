@@ -1,158 +1,151 @@
 import React, { Component } from "react";
+import classnames from "classnames";
+import FileBase64 from "react-file-base64";
 import { ToastsContainer, ToastsStore } from "react-toasts";
 import {
   Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
   Row,
   Col,
   Card,
   CardBody,
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem,
+  NavLink,
   Container,
+  Input,
+  FormGroup,
   ButtonGroup,
 } from "reactstrap";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-import UserListCard from "./../components/list/userListCard";
-import CellLinkRenderer from "./../components/grid/cellLinkRender";
 
-import api from "./../utils/api";
-import sortByDate from "./../utils/sortByDate";
-import isLocalHost from "./../utils/isLocalHost";
+import CKEditor from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
-export default class Sessions extends Component {
-  state = {
-    todos: [],
-    context: { componentParent: this },
-    session: {},
-    sessionModal: false,
-    sessionViewModal: false,
-    showMenu: false,
-    iconTabs: 1,
-    textTabs: 4,
-    columnDefs: [
-      {
-        headerName: "Name",
-        field: "username",
+import CellLinkRenderer from "../components/grid/cellLinkRender";
+import api from "../utils/api";
+
+import { inputAll } from "../constants/Format";
+
+import {
+  gridConfigure,
+  getRecordID,
+  getGridData,
+  downloadExcelFormat,
+  getListData,
+  responseValidator,
+  getFieldClass,
+} from "../utils/grid";
+export default class SessionsList extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      todos: [],
+      cardview: false,
+      context: { componentParent: this },
+
+      itemModInfo: JSON.parse(JSON.stringify(inputAll.pages)),
+      itemModView: false,
+      itemModTab: 1,
+      columnDefs: gridConfigure(inputAll.pages),
+      getRowHeight: function (params) {
+        return 40;
+      },
+      defaultColDef: {
         sortable: true,
-        filter: "agTextColumnFilter",
-        pinned: "left",
+        filter: true,
       },
-      {
-        headerName: "Email",
-        field: "email",
-        filter: "agTextColumnFilter",
+      frameworkComponents: {
+        CellLinkRenderer,
       },
-      {
-        headerName: "googleID",
-        field: "googleID",
-        filter: "agTextColumnFilter",
-      },
-      {
-        headerName: "FirstLogin",
-        field: "firstlogin",
-        sortable: true,
-        filter: "agTextColumnFilter",
-      },
-      {
-        headerName: "Recent Login ",
-        field: "lastlogin",
-        sortable: true,
-        filter: "agTextColumnFilter",
-      },
-      {
-        headerName: "Total Login ",
-        field: "total",
-        sortable: true,
-        filter: "agTextColumnFilter",
-      },
-    ],
-    getRowHeight: function (params) {
-      return 40;
-    },
-    defaultColDef: {
-      sortable: true,
-      filter: true,
-    },
-    frameworkComponents: {
-      CellLinkRenderer,
-    },
-  };
+      gridParams: {},
+      itemList: [],
+      itemGrid: [],
+    };
+
+    this.onInputChange = this.onInputChange.bind(this);
+  }
+
   componentDidMount() {
-    // Fetch all todos
-    api.readAllSessions().then((replists) => {
-      if (replists.message === "unauthorized") {
-        if (isLocalHost()) {
-          alert(
-            "FaunaDB key is not unauthorized. Make sure you set it in terminal session where you ran `npm start`. Visit http://bit.ly/set-fauna-key for more info"
-          );
-        } else {
-          alert(
-            "FaunaDB key is not unauthorized. Verify the key `FAUNADB_SERVER_SECRET` set in Netlify enviroment variables is correct"
-          );
-        }
-        return false;
-      }
+    api.readAllSessions().then((itemList) => {
+      responseValidator(itemList);
       const optimisedData = [];
-      if (replists.length > 0) {
-        replists.forEach(function (item, index) {
+      if (itemList.length > 0) {
+        itemList.forEach(function (item, index) {
           let itemis = item.data;
-          itemis.act = index;
-          itemis.id = getSessionId(item);
+          itemis.id = getRecordID(item);
           optimisedData.push(itemis);
         });
         this.setState({
-          replists: replists,
-          gridData: optimisedData,
-        });
-      } else {
-        this.setState({
-          replists: [],
-          gridData: [],
+          itemList: getListData(optimisedData, inputAll.pages),
+          itemGrid: getGridData(optimisedData, inputAll.pages),
         });
       }
     });
   }
+  toggle = () => {
+    const { itemModView } = this.state;
+    this.setState({
+      itemModView: !itemModView,
+    });
+  };
 
-  saveSession = () => {
-    const { sessionModelData } = this.state;
-    sessionModelData.ts = new Date().getTime() * 10000;
-
-    if (sessionModelData.id) {
+  saveItem = () => {
+    const { itemModInfo } = this.state;
+    // itemModInfo.ts = new Date().getTime() * 10000;
+    const updateApiArr = JSON.parse(JSON.stringify(itemModInfo.data));
+    const updateApiData = {};
+    updateApiArr.forEach(function (item) {
+      if (item.tab !== "pic") {
+        item.list.forEach(function (field) {
+          delete field["id"];
+          delete field["type"];
+        });
+      }
+      updateApiData[item.tab] = item.list;
+      updateApiData.modified = new Date().getTime() * 10000;
+    });
+    if (itemModInfo.id) {
       api
-        .updateSession(sessionModelData.id, sessionModelData)
+        .updateSession(itemModInfo.id, updateApiData)
         .then(() => {
-          ToastsStore.success(`Profile Changes Updated!`);
+          ToastsStore.success(`Session Changes Updated!`);
         })
         .catch((e) => {
-          console.log("An API error occurred", e);
-          ToastsStore.error(`Profile Update Failed!`);
+          ToastsStore.error(`Session Update Failed!`);
         });
     } else {
+      updateApiData.created = new Date().getTime() * 10000;
       api
-        .createSession(sessionModelData)
+        .createSession(updateApiData)
         .then((response) => {
-          ToastsStore.success(`Profile Created Succesfully!`);
+          ToastsStore.success(`Session Created Succesfully!`);
         })
         .catch((e) => {
-          console.log("An API error occurred", e);
-          ToastsStore.error(`Profile Creation Failed!`);
+          ToastsStore.error(`Session Creation Failed!`);
         });
     }
   };
   deleteSession = (e) => {
-    const { replists } = this.state;
+    const { itemList } = this.state;
     const replistId = e.target.dataset.id;
 
     // Optimistically remove replist from UI
-    const filteredSessions = replists.reduce(
+    const filteredSessions = itemList.reduce(
       (acc, current) => {
-        const currentId = getSessionId(current);
+        const currentId = getRecordID(current);
         if (currentId === replistId) {
-          // save item being removed for rollback
           acc.rollbackSession = current;
           return acc;
         }
-        // filter deleted replist out of the replists list
+        // filter deleted replist out of the itemList list
         acc.optimisticState = acc.optimisticState.concat(current);
         return acc;
       },
@@ -163,59 +156,82 @@ export default class Sessions extends Component {
     );
 
     this.setState({
-      replists: filteredSessions.optimisticState,
+      itemList: filteredSessions.optimisticState,
     });
 
     // Make API request to delete replist
     api
       .deleteSession(replistId)
       .then(() => {
-        console.log(`deleted replist id ${replistId}`);
+        ToastsStore.success(`deleted replist id ${replistId}`);
       })
       .catch((e) => {
-        console.log(`There was an error removing ${replistId}`, e);
-        // Add item removed back to list
+        ToastsStore.success(`There was an error removing ${replistId}`, e);
         this.setState({
-          replists: filteredSessions.optimisticState.concat(
+          itemList: filteredSessions.optimisticState.concat(
             filteredSessions.rollbackSession
           ),
         });
       });
   };
 
-  onChange = (e) => {
-    console.log("ose", e);
+  newitemModView = () => {
+    const itemDoc = {
+      data: JSON.parse(JSON.stringify(inputAll.pages)),
+    };
+
     this.setState({
-      [e.target.name]: e.target.value,
+      itemModInfo: itemDoc,
+    });
+    this.setState({
+      itemModView: true,
     });
   };
-  onInputChange = (na, val) => {
-    const { sessionModelData } = this.state;
-    sessionModelData[na] = val;
-    this.setState({ sessionModelData });
-  };
-  onInputSocialChange = (na, val) => {
-    const { sessionModelData } = this.state;
-    sessionModelData.social[na] = val;
-    this.setState({ sessionModelData });
-  };
-  onInputSubjectChange = (na, val) => {
-    const { sessionModelData } = this.state;
-    sessionModelData.subjects[na] = val;
-    this.setState({ sessionModelData });
-  };
-  fileChangedHandler = (files) => {
-    console.log("file", files);
 
-    const { sessionModelData } = this.state;
+  openUserModal = (id) => {
+    const itemDoc = this.state.itemList.find((o) => o.id === id);
+    //const itemDoc = JSON.parse(JSON.stringify(inputAll.pages));
+
+    this.setState({
+      itemModInfo: itemDoc,
+    });
+    this.setState({
+      itemModView: true,
+    });
+  };
+
+  onInputChange = (tab, name, value) => {
+    const { itemModInfo } = this.state;
+
+    var ind = itemModInfo.data[tab].list.findIndex((x) => x.field === name);
+    if (ind >= 0) {
+      itemModInfo.data[tab].list[ind].val = value;
+    }
+    this.setState({ itemModInfo });
+  };
+
+  onEditorStateChange = (tab, name, value) => {
+    const { itemModInfo } = this.state;
+
+    var ind = itemModInfo.data[tab].list.findIndex((x) => x.field === name);
+    if (ind >= 0) {
+      itemModInfo.data[tab].list[ind].val = value;
+    }
+    this.setState({ itemModInfo });
+  };
+
+  fileChangedHandler = (files) => {
+    const { itemModInfo } = this.state;
     if (files.size) {
       const fileSize = files.size.replace("kB", "").trim();
-      console.log("fileSize", fileSize);
+
       if (Number(fileSize) > 1000) {
         ToastsStore.error("Upload Image less than 1 MB");
       } else {
-        sessionModelData.flagimg = files;
-        this.setState({ sessionModelData });
+        var ind = itemModInfo.data.findIndex((x) => x.tab === "pic");
+        itemModInfo.data[ind].list = [];
+        itemModInfo.data[ind].list.push(files);
+        this.setState({ itemModInfo, src: files });
         ToastsStore.success(`${files.name} updated as profile image`);
       }
     }
@@ -227,43 +243,33 @@ export default class Sessions extends Component {
     });
   };
   download = () => {
-    console.log("coming soon");
+    const { gridParams } = this.state;
+    const params = {
+      fileName: "Revit2k8-Sessions",
+      sheetName: "Sessions",
+      processCellCallback(paramsl) {
+        return downloadExcelFormat(paramsl);
+      },
+    };
+
+    gridParams.api.exportDataAsCsv(params);
   };
-  renderSessions() {
-    const { replists } = this.state;
+  setParams = (params) => {
+    if (params) {
+      this.setState({ gridParams: params });
 
-    if (!replists || !replists.length) {
-      // Loading State here
-      return null;
+      try {
+        params.api.setSuppressClipboardPaste(false);
+        params.api.copySelectedRowsToClipboard(false);
+        params.api.closeToolPanel();
+      } catch (e) {
+        // this will run only if the code in the try block errors-out
+      }
     }
-
-    const timeStampKey = "ts";
-    const orderBy = "desc"; // or `asc`
-    const sortOrder = sortByDate(timeStampKey, orderBy);
-    const replistsByDate = replists.sort(sortOrder);
-
-    return replistsByDate.map((replist, i) => {
-      const { data } = replist;
-      const id = getSessionId(replist);
-      // only show delete button after create API response returns
-
-      return (
-        <div key={i} className="col-12 col-md-6 col-sm-12 col-xl-4">
-          <UserListCard
-            html={data.name}
-            profileData={data}
-            profileRef={id}
-            viewLink={true}
-            editLink={true}
-            openUserModal={this.openUserModal}
-            editPath="/session/edit/"
-            viewPath="/session/"
-          />
-        </div>
-      );
-    });
-  }
+  };
   render() {
+    const { itemModInfo } = this.state;
+    console.log(itemModInfo);
     return (
       <>
         <Container className="pt-3" fluid>
@@ -279,7 +285,7 @@ export default class Sessions extends Component {
                     >
                       <Row className="align-items-center pb-2">
                         <div className="col">
-                          <h4 className="mb-0">Pages List</h4>
+                          <h4 className="mb-0">Sessions List</h4>
                         </div>
                         <div className="col text-right">
                           <ButtonGroup size="sm">
@@ -296,10 +302,11 @@ export default class Sessions extends Component {
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
                         floatingFilter={true}
-                        rowData={this.state.gridData}
+                        rowData={this.state.itemGrid}
                         getRowHeight={this.state.getRowHeight}
                         context={this.state.context}
                         frameworkComponents={this.state.frameworkComponents}
+                        onGridReady={this.setParams}
                       ></AgGridReact>
                       <br />
                     </div>
@@ -309,15 +316,158 @@ export default class Sessions extends Component {
               </Col>
             </div>
           </div>
+
+          <Modal
+            isOpen={this.state.itemModView}
+            toggle={this.toggle}
+            className="modal-lg lg"
+          >
+            <ModalHeader toggle={this.toggle} className="h2">
+              Session
+            </ModalHeader>
+            <ModalBody>
+              <form
+                className="todo-create-wrapper"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  this.saveItem();
+                }}
+              >
+                <Container fluid>
+                  <Row>
+                    <Col md="12">
+                      {/*nav Menu*/}
+                      <Nav className="nav-tabs-info" role="tablist" tabs>
+                        {itemModInfo &&
+                          itemModInfo.data &&
+                          itemModInfo.data.length > 0 &&
+                          itemModInfo.data.map((tab, i) => (
+                            <NavItem key={`nabtabmenu${i}`}>
+                              <NavLink
+                                className={classnames({
+                                  active: this.state.itemModTab === i + 1,
+                                })}
+                                onClick={(e) =>
+                                  this.toggleTabs(e, "itemModTab", i + 1)
+                                }
+                              >
+                                {tab.name}
+                              </NavLink>
+                            </NavItem>
+                          ))}
+                      </Nav>
+                      {/** */}
+                      <TabContent
+                        className="tab-space"
+                        activeTab={"link" + this.state.itemModTab}
+                      >
+                        {itemModInfo &&
+                          itemModInfo.data &&
+                          itemModInfo.data.length > 0 &&
+                          itemModInfo.data.map((tab, i) => (
+                            <TabPane
+                              tabId={"link" + (i + 1)}
+                              key={`nabtabcontent${i}`}
+                            >
+                              <Container fluid className="pt-3">
+                                <Row>
+                                  {tab.tab !== "pic" &&
+                                    tab.list.map((tbli, j) => (
+                                      <Col
+                                        className={getFieldClass(tbli.type)}
+                                        key={`formContent${j}`}
+                                      >
+                                        <FormGroup>
+                                          <label className="form-label">
+                                            {tbli.name || ""}
+                                          </label>
+                                          {tbli.type !== "textarea" && (
+                                            <Input
+                                              type={tbli.type}
+                                              value={tbli.val || ""}
+                                              name={tbli.field || ""}
+                                              onChange={(e) =>
+                                                this.onInputChange(
+                                                  i,
+                                                  e.target.name,
+                                                  e.target.value
+                                                )
+                                              }
+                                            />
+                                          )}
+                                          {tbli.type === "textarea" && (
+                                            <CKEditor
+                                              editor={ClassicEditor}
+                                              data={tbli.val || ""}
+                                              onInit={(editor) => {
+                                                // You can store the "editor" and use when it is needed.
+                                                console.log(
+                                                  "Editor is ready to use!",
+                                                  editor
+                                                );
+                                              }}
+                                              onChange={(event, editor) => {
+                                                const data = editor.getData();
+                                                this.onInputChange(
+                                                  i,
+                                                  tbli.field,
+                                                  data
+                                                );
+                                                console.log({
+                                                  event,
+                                                  editor,
+                                                  data,
+                                                });
+                                              }}
+                                              onBlur={(event, editor) => {
+                                                console.log("Blur.", editor);
+                                              }}
+                                              onFocus={(event, editor) => {
+                                                console.log("Focus.", editor);
+                                              }}
+                                            />
+                                          )}{" "}
+                                        </FormGroup>
+                                      </Col>
+                                    ))}
+                                  {tab.tab === "pic" && (
+                                    <div className="cmsImageDiv">
+                                      <div className="cmsUploadimage">
+                                        Upload Image.
+                                        <FileBase64
+                                          multiple={false}
+                                          onDone={this.fileChangedHandler.bind(
+                                            this
+                                          )}
+                                        />
+                                      </div>
+
+                                      {tab.list &&
+                                        tab.list.length > 0 &&
+                                        tab.list[0].base64 && (
+                                          <img
+                                            alt="profilepic"
+                                            className="img-fluid"
+                                            src={`${tab.list[0].base64}`}
+                                          />
+                                        )}
+                                    </div>
+                                  )}
+                                </Row>
+                              </Container>
+                            </TabPane>
+                          ))}
+                      </TabContent>
+                    </Col>
+                  </Row>
+                  <hr />
+                  <button className="btn btn-info">Create / Update</button>
+                </Container>
+              </form>{" "}
+            </ModalBody>
+          </Modal>
         </Container>
       </>
     );
   }
-}
-
-function getSessionId(todo) {
-  if (!todo.ref) {
-    return null;
-  }
-  return todo.ref["@ref"].id;
 }
